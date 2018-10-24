@@ -1,0 +1,2 @@
+Orange3>=3.16.0
+orange-spectroscopy
