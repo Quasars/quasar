@@ -86,11 +86,11 @@ cp -a "${RES}"/DS_Store "${TMP_TEMPLATE}"/.DS_Store
 ln -s /Applications/ "${TMP_TEMPLATE}"/Applications
 
 # Copy the .app directory in place
-cp -a "${APP}" "${TMP_TEMPLATE}"/Orange3.app
+cp -a "${APP}" "${TMP_TEMPLATE}"/Quasar.app
 
 if [[ "${IDENTITY}" ]]; then
     codesign -s "${IDENTITY}" --deep --verbose \
-        "${TMP_TEMPLATE}"/Orange3.app
+        "${TMP_TEMPLATE}"/Quasar.app
 fi
 
 # Create a regular .fseventsd/no_log file
@@ -101,7 +101,7 @@ touch "${TMP_TEMPLATE}"/.fseventsd/no_log
 
 
 echo "Creating a temporary disk image"
-hdiutil create -format UDRW -volname Orange -fs HFS+ \
+hdiutil create -format UDRW -volname Quasar -fs HFS+ \
        -fsargs "-c c=64,a=16,e=16" \
        -srcfolder "${TMP_TEMPLATE}" \
        "${TMP_DMG}"

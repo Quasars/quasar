@@ -113,7 +113,7 @@ ln -fs ../../lib/python${PYVER}/site-packages/certifi/cacert.pem \
 # sanity check
 test -r "${APPDIR}"/Contents/Frameworks/Python.framework/Versions/${PYVER}/etc/openssl/cert.pem
 
-cat <<'EOF' > "${APPDIR}"/Contents/MacOS/Orange
+cat <<'EOF' > "${APPDIR}"/Contents/MacOS/Quasar
 #!/bin/bash
 
 DIR=$(dirname "$0")
@@ -127,9 +127,9 @@ fi
 # Disable user site packages
 export PYTHONNOUSERSITE=1
 
-exec "${DIR}"/PythonApp -m Orange.canvas "$@"
+exec "${DIR}"/PythonApp -m quasar "$@"
 EOF
-chmod +x "${APPDIR}"/Contents/MacOS/Orange
+chmod +x "${APPDIR}"/Contents/MacOS/Quasar
 
 cat <<'EOF' > "${APPDIR}"/Contents/MacOS/pip
 #!/bin/bash
@@ -146,8 +146,9 @@ chmod +x "${APPDIR}"/Contents/MacOS/pip
 PYTHON="${APPDIR}"/Contents/MacOS/python
 
 "${PYTHON}" -m pip install "${PIP_REQ_ARGS[@]}"
+"${PYTHON}" -m pip install ../..
 
-VERSION=$("${PYTHON}" -m pip show orange3 | grep -E '^Version:' |
+VERSION=$("${PYTHON}" -m pip show quasar | grep -E '^Version:' |
           cut -d " " -f 2)
 
 m4 -D__VERSION__="${VERSION:?}" "${APPDIR}"/Contents/Info.plist.in \
@@ -162,5 +163,5 @@ rm "${APPDIR}"/Contents/Info.plist.in
     trap cleanup EXIT
     cd "${tempdir}"
     "${PYTHON}" -m pip install --no-cache-dir --no-index orange3 PyQt5
-    "${PYTHON}" -m Orange.canvas --help > /dev/null
+    "${PYTHON}" -m quasar --help > /dev/null
 )

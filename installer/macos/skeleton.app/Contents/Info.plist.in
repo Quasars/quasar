@@ -3,28 +3,28 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>Orange</string>
+    <string>Quasar</string>
     <key>CFBundleExecutable</key>
-    <string>Orange</string>
+    <string>Quasar</string>
     <key>CFBundleIdentifier</key>
-    <string>si.biolab.orange</string>
+    <string>si.biolab.quasar</string>
     <key>CFBundleGetInfoString</key>
-    <string>Orange, component-based data mining software</string>
+    <string>Quasar, free your data</string>
     <key>CFBundleVersion</key>
     <string>__VERSION__</string>
     <key>CFBundleShortVersionString</key>
     <string>__VERSION__</string>
     <key>CFBundleIconFile</key>
-    <string>orange.icns</string>
+    <string>quasar.icns</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleSignature</key>
-    <string>Orng</string>
+    <string>Quasar</string>
     <key>CFBundleDocumentTypes</key>
     <array>
         <dict>
             <key>CFBundleTypeName</key>
-            <string>Orange Canvas Schema</string>
+            <string>Quasar Workflow</string>
             <key>CFBundleTypeExtensions</key>
             <array>
                 <string>ows</string>
