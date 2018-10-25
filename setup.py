@@ -24,7 +24,7 @@ PACKAGES = find_packages()
 PACKAGE_DATA = {
     'quasar.tutorials': ['*.ows', '*.tab'],
     'quasar.tests': ['*'],
-    'quasar.launcher.icons': ['*.ows', '*.png'],
+    'quasar.launcher': ['icons/*.ows', 'icons/*.png'],
 }
 
 DATA_FILES = [
