@@ -1,0 +1,42 @@
+{% set data = load_setup_py_data() %}
+{% set version = data['version'] %}
+
+package:
+  name: quasar
+  version: {{ data['version'] }}
+
+source:
+  git_url: ../../
+
+build:
+  number: 0
+  noarch: python
+  script:
+    - python setup.py install --single-version-externally-managed --record record.txt
+
+requirements:
+  build:
+    - python
+    - sphinx
+    - setuptools
+    - recommonmark
+  run:
+    - python
+    - orange3
+    - orange-spectroscopy
+
+test:
+  imports:
+    - quasar.__main__
+  commands:
+    - python -m quasar --help
+
+about:
+  home: https://quasar.codes/
+  license: GPL-3
+  license_family: GPL
+  summary: 'Quasar'
+
+extra:
+  recipe-maintainers:
+    - markotoplak
