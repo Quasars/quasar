@@ -339,7 +339,7 @@ EOF
              -DBASEDIR="${basedir}" \
              -DPYINSTALLER=${pyinstaller} \
              -DINSTALL_REGISTRY_KEY=scOrange \
-             -DINSTALLERICON="$(dirname "$0")"/OrangeInstall.ico \
+             -DINSTALLERICON="$(dirname "$0")"/quasar.ico \
              -DLICENSE_FILE="${BASEDIR}"/license.txt \
              "${extransisparams[@]}" \
              -NOCD \
@@ -373,5 +373,5 @@ cp "${CACHEDIR:?}/miniconda/Miniconda3-${MINICONDA_VERSION}-Windows-${CONDAPLATT
    "${BASEDIR:?}/"
 
 mkdir -p "${BASEDIR:?}/icons"
-cp "$(dirname "$0")"/{scOrange.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
+cp "$(dirname "$0")"/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
 make-installer

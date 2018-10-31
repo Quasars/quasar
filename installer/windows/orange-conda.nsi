@@ -538,13 +538,13 @@ Section -Launchers
     CreateShortCut \
         "$InstDir\${LAUNCHER_SHORTCUT_NAME}.lnk" \
         "$PythonExecPrefix\pythonw.exe" "-m orangecontrib.single_cell" \
-        "$PythonPrefix\share\scorange\icons\scOrange.ico" 0
+        "$PythonPrefix\share\scorange\icons\quasar.ico" 0
     # Utility shortcut to launch the application with max log level attached
     # to the console that remains visible after exit
     CreateShortCut \
         "$InstDir\${LAUNCHER_SHORTCUT_NAME} Debug.lnk" \
         "%COMSPEC%" '/K "$PythonExecPrefix\python.exe" -m orangecontrib.single_cell -l4' \
-        "$PythonPrefix\share\scorange\icons\scOrange.ico" 0
+        "$PythonPrefix\share\scorange\icons\quasar.ico" 0
     # A utility shortcut for activating the environment
     CreateShortCut \
         "$InstDir\${APPNAME} Command Prompt.lnk" \
@@ -573,7 +573,7 @@ Section "Start Menu Shortcuts" SectionStartMenu
         CreateShortCut \
             "$SMPROGRAMS\$StartMenuFolder\${LAUNCHER_SHORTCUT_NAME}.lnk" \
             "$PythonExecPrefix\pythonw.exe" "-m orangecontrib.single_cell" \
-            "$PythonPrefix\share\scorange\icons\scOrange.ico" 0
+            "$PythonPrefix\share\scorange\icons\quasar.ico" 0
     ${EndIf}
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -592,7 +592,7 @@ Section "Desktop Shortcuts" SectionDesktop
     CreateShortCut \
         "$DESKTOP\${LAUNCHER_SHORTCUT_NAME}.lnk" \
         "$PythonExecPrefix\pythonw.exe" "-m orangecontrib.single_cell" \
-        "$PythonPrefix\share\scorange\icons\scOrange.ico" 0
+        "$PythonPrefix\share\scorange\icons\quasar.ico" 0
 SectionEnd
 SectionGroupEnd
 
