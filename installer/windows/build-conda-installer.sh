@@ -35,7 +35,7 @@ Examples
 '
 }
 
-NAME=scOrange
+NAME=Quasar
 # version is determined from the ENV_SPEC_FILE
 VERSION=
 
@@ -331,21 +331,22 @@ EOF
     mkdir -p "${DISTDIR}"
 
     makensis -DOUTFILENAME="${outpath}/${filename}" \
-             -DAPPNAME=scOrange \
+             -DAPPNAME=Quasar \
              -DVERSION=${VERSION} \
              -DVERMAJOR=${major} -DVERMINOR=${minor} -DVERMICRO=${micro} \
              -DPYMAJOR=${pymajor} -DPYMINOR=${pyminor} -DPYMICRO=${pymicro} \
              -DPYARCH=${PLATTAG} \
              -DBASEDIR="${basedir}" \
              -DPYINSTALLER=${pyinstaller} \
-             -DINSTALL_REGISTRY_KEY=scOrange \
+             -DINSTALL_REGISTRY_KEY=Quasar \
              -DINSTALLERICON="$(dirname "$0")"/quasar.ico \
              -DLICENSE_FILE="${BASEDIR}"/license.txt \
              "${extransisparams[@]}" \
              -NOCD \
-             -V4 -WX \
+             -V4 \
              "-X!addincludedir $(win-path "${scriptdir}")" \
              "${nsis_script:?}"
+    # removed -WX because it was a problem with makensis v2.51-1 on Ubuntu
 }
 
 fetch-miniconda ${MINICONDA_VERSION} ${PLATTAG} "${CACHEDIR:?}"/miniconda
@@ -360,8 +361,8 @@ else
     conda-fetch-packages "${BASEDIR:?}"/conda-pkgs "${ENV_SPEC_FILE}"
     # extract the orange version from env spec
     VERSION=$(cat < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt |
-              grep -E 'orange3-single-cell.*tar.bz2' |
-              cut -d "-" -f 4)
+              grep -E 'quasar-.*tar.bz2' |
+              sed -e 's@^.*quasar-\([^-]*\)-.*tar.bz2.*@\1@')
 fi
 
 if [[ ! "${VERSION}" ]]; then

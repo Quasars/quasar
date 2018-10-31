@@ -182,8 +182,8 @@ Var StartMenuFolder
 !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchApplication"
 !define MUI_FINISHPAGE_RUN_TEXT "Start ${APPLICATIONNAME}"
 # - add link at the bottom
-!define MUI_FINISHPAGE_LINK "singlecell.biolab.si"
-!define MUI_FINISHPAGE_LINK_LOCATION "https://singlecell.biolab.si"
+!define MUI_FINISHPAGE_LINK "quasar.codes"
+!define MUI_FINISHPAGE_LINK_LOCATION "https://quasar.codes"
 
 !insertmacro MUI_PAGE_FINISH
 
@@ -521,11 +521,11 @@ FunctionEnd
 
 Section -Icons
     # Layout icons if necessary (are not present)
-    ${IfNot} ${FileExists} $PythonPrefix\share\scorange\icons\*.ico"
+    ${IfNot} ${FileExists} $PythonPrefix\share\quasar\icons\*.ico"
         ${ExtractTempRec} "${BASEDIR}\icons\*.ico" "${TEMPDIR}\icons"
-        CreateDirectory "$PythonPrefix\share\scorange\icons"
+        CreateDirectory "$PythonPrefix\share\quasar\icons"
         CopyFiles /SILENT "${TEMPDIR}\icons\*.ico" \
-                          "$PythonPrefix\share\scorange\icons"
+                          "$PythonPrefix\share\quasar\icons"
     ${EndIf}
 SectionEnd
 
@@ -537,14 +537,14 @@ Section -Launchers
     # Startup shortcut
     CreateShortCut \
         "$InstDir\${LAUNCHER_SHORTCUT_NAME}.lnk" \
-        "$PythonExecPrefix\pythonw.exe" "-m orangecontrib.single_cell" \
-        "$PythonPrefix\share\scorange\icons\quasar.ico" 0
+        "$PythonExecPrefix\pythonw.exe" "-m quasar" \
+        "$PythonPrefix\share\quasar\icons\quasar.ico" 0
     # Utility shortcut to launch the application with max log level attached
     # to the console that remains visible after exit
     CreateShortCut \
         "$InstDir\${LAUNCHER_SHORTCUT_NAME} Debug.lnk" \
-        "%COMSPEC%" '/K "$PythonExecPrefix\python.exe" -m orangecontrib.single_cell -l4' \
-        "$PythonPrefix\share\scorange\icons\quasar.ico" 0
+        "%COMSPEC%" '/K "$PythonExecPrefix\python.exe" -m quasar -l4' \
+        "$PythonPrefix\share\quasar\icons\quasar.ico" 0
     # A utility shortcut for activating the environment
     CreateShortCut \
         "$InstDir\${APPNAME} Command Prompt.lnk" \
@@ -572,8 +572,8 @@ Section "Start Menu Shortcuts" SectionStartMenu
         CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
         CreateShortCut \
             "$SMPROGRAMS\$StartMenuFolder\${LAUNCHER_SHORTCUT_NAME}.lnk" \
-            "$PythonExecPrefix\pythonw.exe" "-m orangecontrib.single_cell" \
-            "$PythonPrefix\share\scorange\icons\quasar.ico" 0
+            "$PythonExecPrefix\pythonw.exe" "-m quasar" \
+            "$PythonPrefix\share\quasar\icons\quasar.ico" 0
     ${EndIf}
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -591,8 +591,8 @@ Section "Desktop Shortcuts" SectionDesktop
     DetailPrint "Installing Desktop shortcurt"
     CreateShortCut \
         "$DESKTOP\${LAUNCHER_SHORTCUT_NAME}.lnk" \
-        "$PythonExecPrefix\pythonw.exe" "-m orangecontrib.single_cell" \
-        "$PythonPrefix\share\scorange\icons\quasar.ico" 0
+        "$PythonExecPrefix\pythonw.exe" "-m quasar" \
+        "$PythonPrefix\share\quasar\icons\quasar.ico" 0
 SectionEnd
 SectionGroupEnd
 
@@ -634,15 +634,15 @@ Section -Register SectionRegister
 
     ${LogWrite} "Register .ows filetype"
     WriteRegStr SHELL_CONTEXT \
-        "Software\Classes\.ows" "" "scOrange"
+        "Software\Classes\.ows" "" "Quasar"
     WriteRegStr SHELL_CONTEXT \
-        "Software\Classes\scOrange" "" "Orange Workflow"
+        "Software\Classes\Quasar" "" "Orange Workflow"
     WriteRegStr SHELL_CONTEXT \
-        "Software\Classes\scOrange\DefaultIcon" "" \
-        "$PythonPrefix\share\scorange\icons\OrangeOWS.ico"
+        "Software\Classes\Quasar\DefaultIcon" "" \
+        "$PythonPrefix\share\quasar\icons\OrangeOWS.ico"
     WriteRegStr SHELL_CONTEXT \
-        "Software\Classes\scOrange\Shell\Open\Command\" "" \
-        '"$PythonExecPrefix\pythonw.exe" -m orangecontrib.single_cell "%1"'
+        "Software\Classes\Quasar\Shell\Open\Command\" "" \
+        '"$PythonExecPrefix\pythonw.exe" -m quasar "%1"'
 
     WriteUninstaller "$InstDir\${UNINSTALL_EXEFILE}"
 
@@ -672,7 +672,7 @@ Section -Register SectionRegister
                 InstallLocation "$InstDir"
     WriteRegStr SHELL_CONTEXT \
                 "${WINDOWS_UNINSTALL_REGKEY}\${APPNAME}" \
-                URLInfoAbout http://singlecell.biolab.si
+                URLInfoAbout https://quasar.codes
 
     WriteRegDWORD SHELL_CONTEXT \
                   "${WINDOWS_UNINSTALL_REGKEY}\${APPNAME}" \
@@ -692,8 +692,8 @@ Function un.Register
     ${AndIf} $un.InstallDir == $InstDir
         ${LogWrite} "Deleting reg key: ${INSTALL_SETTINGS_KEY}"
         DeleteRegKey SHCTX "${INSTALL_SETTINGS_KEY}"
-        ${LogWrite} "Deleting reg key: Software\Classes\scOrange"
-        DeleteRegKey SHCTX Software\Classes\scOrange
+        ${LogWrite} "Deleting reg key: Software\Classes\Quasar"
+        DeleteRegKey SHCTX Software\Classes\Quasar
     ${Else}
         ${LogWrite} "InstallDir from ${INSTALL_SETTINGS_KEY} does not match \
                     InstDir ($un.InstallDir != $InstDir). Leaving it."
@@ -713,7 +713,7 @@ Function un.Register
 FunctionEnd
 
 Function LaunchApplication
-    ExecShell "open" "$PythonExecPrefix\pythonw.exe" "-m orangecontrib.single_cell"
+    ExecShell "open" "$PythonExecPrefix\pythonw.exe" "-m quasar"
 FunctionEnd
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
