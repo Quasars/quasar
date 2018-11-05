@@ -3,3 +3,4 @@ recursive-include quasar *.ows icons/*
 global-exclude __pycache__
 
 include README.pypi
+include requirements.txt
