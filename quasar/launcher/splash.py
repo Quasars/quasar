@@ -12,18 +12,18 @@ def splash_screen():
     )
 
     version = QCoreApplication.applicationVersion()
-    size = 26 if len(version) < 6 else 16
+    size = 21 if len(version) < 6 else 16
     font = QFont("Arial")
     font.setPixelSize(size)
     metrics = QFontMetrics(font)
     br = metrics.boundingRect(version).adjusted(-5, 0, 5, 0)
-    br.moveBottomLeft(QPoint(468, 131))
+    br.moveBottomLeft(QPoint(216, 82))
 
     p = QPainter(pm)
     p.setRenderHint(QPainter.Antialiasing)
     p.setRenderHint(QPainter.TextAntialiasing)
     p.setFont(font)
-    p.setPen(QColor("#ff5900"))
+    p.setPen(QColor("#ff6d00"))
     p.drawText(br, Qt.AlignCenter, version)
     p.end()
-    return pm, QRect(188, 155, 250, 328)
+    return pm, QRect(60, 101, 250, 328)

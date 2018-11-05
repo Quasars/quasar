@@ -93,7 +93,7 @@ class Launcher:
 
         # showing currently loading widget
         def showMessage(self, message, alignment=Qt.AlignLeft, color=Qt.black):
-            sm(self, message, alignment=alignment, color=QColor("#ff5900"))
+            sm(self, message, alignment=alignment, color=QColor("#ff6d00"))
 
         SplashScreen.showMessage = showMessage
 
