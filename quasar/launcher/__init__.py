@@ -7,9 +7,9 @@ class Launcher:
     def launch(self):
         self.fix_application_name()
         self.fix_application_dirs()
+        self.fix_application_icon()
         self.replace_update_check()
         self.replace_splash_screen()
-
         self.main()
 
     def fix_application_name(self):
@@ -80,6 +80,17 @@ class Launcher:
                 return base
 
         environ.cache_dir = cache_dir
+
+    def fix_application_icon(self):
+        import pkg_resources
+        from Orange.canvas import config
+        from AnyQt.QtGui import QIcon
+
+        def application_icon():
+            path = pkg_resources.resource_filename(
+                __name__, "icons/quasar.svg")
+            return QIcon(path)
+        config.application_icon = application_icon
 
     def replace_splash_screen(self):
         from AnyQt.QtCore import Qt
