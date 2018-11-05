@@ -1,0 +1,5 @@
+# Ref https://docs.python.org/2/distutils/sourcedist.html#commands
+recursive-include quasar *.ows icons/*
+global-exclude __pycache__
+
+include README.pypi
