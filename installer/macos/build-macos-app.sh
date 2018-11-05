@@ -73,7 +73,7 @@ APPDIR=${1:?"Target APPDIR argument is missing"}
 PYVER=${PYTHON_VERSION%.*}  # Major.Minor
 
 if [[ ${#PIP_REQ_ARGS[@]} -eq 0 ]]; then
-    PIP_REQ_ARGS+=( Orange3 -r "${DIR}"/requirements.txt )
+    PIP_REQ_ARGS+=( -r "${DIR}"/requirements.txt )
 fi
 
 mkdir -p "${APPDIR}"/Contents/MacOS
