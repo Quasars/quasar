@@ -41,12 +41,12 @@ fi
 VERSION=$(
     "${APPPATH}"/Contents/MacOS/python -c '
 import pkg_resources
-print(pkg_resources.get_distribution("Orange3").version)
+print(pkg_resources.get_distribution("Quasar").version)
 '
 )
 
 # Create disk image
 "${SCRIPTS}"/create-dmg-installer.sh --app "${APPPATH}" \
     --sign "${IDENTITY}" \
-    "${DIST}/Orange3-${VERSION}.dmg"
+    "${DIST}/Quasar-${VERSION}.dmg"
 
