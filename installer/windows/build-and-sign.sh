@@ -6,6 +6,7 @@ INSTALLER="$( cd "$(dirname "$0")/.." ; pwd -P )"
 BUILD="$INSTALLER/windows/build"
 BASE="$( cd "$(dirname "$0")/../.." ; pwd -P )"
 DIST="$BASE/dist"
+OPUSFC="/home/marko/conda-opusfc"
 
 # Build updated conda package
 mkdir -p "$BUILD/conda"
@@ -31,6 +32,10 @@ CONDA_PACKAGE=$( find "$BUILD/conda" \
 echo "$CONDA_PACKAGE" >> $NEW_SPEC
 CONDA_PACKAGE=$( find "$BUILD/conda" \
   -name "orange-spectroscopy*bz2" \
+  -exec echo "file://{}" \; )
+echo "$CONDA_PACKAGE" >> $NEW_SPEC
+CONDA_PACKAGE=$( find "$OPUSFC" \
+  -name "opusfc*py36*bz2" \
   -exec echo "file://{}" \; )
 echo "$CONDA_PACKAGE" >> $NEW_SPEC
 
