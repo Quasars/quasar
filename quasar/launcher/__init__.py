@@ -1,6 +1,9 @@
-import quasar
 from quasar.launcher.splash import splash_screen
-quasar.__version__ = "0.0.1"
+
+
+def version():
+    import pkg_resources
+    return pkg_resources.get_distribution("Quasar").version
 
 
 class Launcher:
@@ -25,14 +28,9 @@ class Launcher:
                       Otherwise it can break Qt's plugin search paths.
 
             """
-            import pkg_resources
-
-            dist = pkg_resources.get_distribution("Quasar")
-            version = dist.version
-
             QCoreApplication.setOrganizationDomain("Quasars")
             QCoreApplication.setApplicationName("Quasar")
-            QCoreApplication.setApplicationVersion(version)
+            QCoreApplication.setApplicationVersion(version())
             QSettings.setDefaultFormat(QSettings.IniFormat)
 
             # Make it a null op.
@@ -52,7 +50,7 @@ class Launcher:
             """
             base = environ.data_dir_base()
             if versioned:
-                return os.path.join(base, "quasar", quasar.__version__)
+                return os.path.join(base, "quasar", version())
             else:
                 return os.path.join(base, "quasar")
 
@@ -71,7 +69,7 @@ class Launcher:
             else:
                 base = os.path.expanduser("~/.cache")
 
-            base = os.path.join(base, "quasar", quasar.__version__)
+            base = os.path.join(base, "quasar", version())
             if sys.platform == "win32":
                 # On Windows cache and data dir are the same.
                 # Microsoft suggest using a Cache subdirectory
