@@ -1,4 +1,5 @@
 from quasar.launcher.splash import splash_screen
+from quasar.launcher.update_check import check_for_updates
 
 
 def version():
@@ -108,7 +109,7 @@ class Launcher:
 
     def replace_update_check(self):
         from Orange.canvas import __main__
-        __main__.check_for_updates = lambda: None
+        __main__.check_for_updates = check_for_updates
 
     def main(self):
         from Orange.canvas.__main__ import main
