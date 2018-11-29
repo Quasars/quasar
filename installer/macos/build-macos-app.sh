@@ -41,7 +41,7 @@ Examples
 DIR=$(dirname "$0")
 
 # Python version in the bundled framework
-PYTHON_VERSION=3.6.1
+PYTHON_VERSION=3.6.6
 
 # Pip arguments used to populate the python environment in the application
 # bundle
