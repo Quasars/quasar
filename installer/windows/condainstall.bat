@@ -27,6 +27,7 @@ if not exist "%PREFIX%\python.exe" (
         "%CONDA%" install --yes --copy --quiet --prefix "%PREFIX%" "%CD%\%%f" ^
             || exit /b !ERRORLEVEL!
     )
+)
 
 rem # Create .condarc file that includes conda-forge channel
 rem # We need it so add-ons can be installed from conda-forge
