@@ -42,6 +42,9 @@ ENTRY_POINTS = {
     'orange.widgets.tutorials': (
         'quasartutorials = quasar.tutorials',
     ),
+    "gui_scripts": (
+        "quasar = quasar.__main__:main",
+    ),
 }
 
 TEST_SUITE = "quasar.tests.suite"
