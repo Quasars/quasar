@@ -7,14 +7,20 @@ BUILD="$INSTALLER/windows/build"
 BASE="$( cd "$(dirname "$0")/../.." ; pwd -P )"
 DIST="$BASE/dist"
 OPUSFC="/home/marko/conda-opusfc"
+SPECTROSCOPY_BRANCH="0.4.1"
 
 # Build updated conda package
 mkdir -p "$BUILD/conda"
 rm -rf "$BUILD/conda"/*
 
+rm -rf "$BUILD/spectroscopy"
+
+git clone --single-branch --branch "$SPECTROSCOPY_BRANCH" \
+   https://github.com/Quasars/orange-spectroscopy \
+   "$BUILD/spectroscopy"
+
 # Manually build orange-spectroscopy that is in the same folder as quasar
-SPECTROSCOPY="$( cd "$(dirname "$0")/../../../orange-spectroscopy" ; pwd -P )"
-conda build "$SPECTROSCOPY/conda" \
+conda build "$BUILD/spectroscopy/conda" \
   --output-folder "$BUILD/conda"
 
 conda build "$INSTALLER/conda" \
@@ -45,7 +51,10 @@ echo "$CONDA_PACKAGE" >> $NEW_SPEC
   --online=no \
   --dist-dir $DIST
 
-# Sign the installer
+
+# The following way of signing packages does not work in Windows 10
+
+if false; then
 VERSION=$( echo $CONDA_PACKAGE | sed -n 's/.*-\([0-9.]*\)-.*/\1/p' )
 signcode \
   -spc ~/Desktop/ulfri.spc \
@@ -55,3 +64,4 @@ signcode \
   -n scOrange \
   -i http://singlecell.biolab.si \
   "$DIST/scOrange-$VERSION-Miniconda-x86_64.exe"
+fi
