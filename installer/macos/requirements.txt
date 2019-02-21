@@ -4,22 +4,28 @@
 # Prebuild dependencies that themself do not publish wheels (e.g. bottleneck)
 --find-links=https://orange.biolab.si/download/files/wheelhouse
 
-AnyQt==0.0.8
-Bottleneck==1.2.0
-chardet==3.0.4
+--extra-index-url=https://pypi.anaconda.org/ales-erjavec/simple
+
+--only-binary numpy,scipy,bottleneck,scikit-learn,PyQt5,opentsne
+
+numpy~=1.15.4
+scipy~=1.1.0
+AnyQt>=0.0.8
+Bottleneck~=1.2.0
+chardet~=3.0
 docutils==0.13.1
 joblib==0.11
 keyring==10.3.1
 keyrings.alt==2.2
-numpy==1.15.4
-PyQt5==5.9
+PyQt5~=5.9.1
 pyqtgraph==0.10.0
-scikit-learn==0.20.1
-scipy==1.1.0
-sip==4.19.3
+scikit-learn~=0.20.1
 six==1.10.0
+pip~=9.0.1
 xlrd==1.0.0
-CommonMark==0.7.3
-matplotlib==2.2.3
-Orange3==3.18.0
-orange-spectroscopy==0.3.12
+matplotlib~=2.2.3
+opentsne==0.3.0
+python-louvain>=0.13
+opusFC~=1.1.2
+Orange3==3.20.0
+orange-spectroscopy==0.4.1
