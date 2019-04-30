@@ -73,7 +73,7 @@ APPDIR=${1:?"Target APPDIR argument is missing"}
 PYVER=${PYTHON_VERSION%.*}  # Major.Minor
 
 if [[ ${#PIP_REQ_ARGS[@]} -eq 0 ]]; then
-    PIP_REQ_ARGS+=( -r "${DIR}"/requirements.txt )
+    PIP_REQ_ARGS+=( -r "${DIR}"/requirements.txt ../.. )
 fi
 
 mkdir -p "${APPDIR}"/Contents/MacOS
@@ -146,7 +146,6 @@ chmod +x "${APPDIR}"/Contents/MacOS/pip
 PYTHON="${APPDIR}"/Contents/MacOS/python
 
 "${PYTHON}" -m pip install "${PIP_REQ_ARGS[@]}"
-"${PYTHON}" -m pip install ../..
 
 VERSION=$("${PYTHON}" -m pip show quasar | grep -E '^Version:' |
           cut -d " " -f 2)
