@@ -3,13 +3,11 @@ clone_depth: 30
 environment:
   global:
     # Commit ref/tag to checkout
-    BUILD_COMMIT: FETCH_HEAD
+    BUILD_COMMIT: 0.3.0
 
     # Build the package locally or use the build packages from
-    # conda-forge / PyPI. The BUILD_COMMIT must match the package version
-    # to build.
-    # Comment/override this if building release versions.
-    BUILD_LOCAL: 1
+    # conda-forge / PyPI. Unsupported!
+    BUILD_LOCAL:
 
     PIP_DISABLE_PIP_VERSION_CHECK: 1
     # disable threaded builds on Python 3.5+ when using numpy's distutils
@@ -23,8 +21,7 @@ environment:
       PLATTAG: win_amd64
       CONDA: C:\Miniconda36-x64\Scripts\conda
       PYTHON: C:\Miniconda36-x64\python
-      CONDA_SPEC_FILE: ..\specs\win\conda-spec.txt
-      BUILD_LOCAL:
+      # CONDA_SPEC_FILE: installer\windows\specs\conda-spec.txt
 
 matrix:
   fast_finish: true
@@ -36,23 +33,22 @@ build_script:
   - set "PATH_BEFORE_BUILD=%PATH%"
   - set "PATH=C:\msys64\usr\bin;C:\Program Files (x86)\NSIS;%PATH%"
 
-  - if not "%CONDA%" == "" ( ..\ci\appveyor-conda-build.bat )
-  - if "%CONDA%" == "" ( ..\ci\appveyor-build.bat )
+  - if not "%CONDA%" == "" ( ci\appveyor-conda-build.bat )
+  - if "%CONDA%" == "" ( ci\appveyor-build.bat )
 
-  - for %%s in ( dist/Orange3*.exe ) do ( set "INSTALLER=%%s" )
+  - for %%s in ( dist/Quasar*.exe ) do ( set "INSTALLER=%%s" )
   - echo INSTALLER = %INSTALLER%
 
   - set "PATH=%PATH_BEFORE_BUILD%"
-  - cd ..
 
 test_script:
   # cleanup registry of anaconda reg keys
   - reg delete HKEY_LOCAL_MACHINE\Software\Python\ContinuumAnalytics /f
   - reg delete HKEY_CURRENT_USER\Software\Python\ContinuumAnalytics /f
-  - dir orange3\dist
+  - dir dist
   # Install in silent mode. Output has to be piped somewhere so the installer
   # runs 'attached' to the console.
-  - orange3\dist\%INSTALLER% /S /D=C:\test-install > nul
+  - dist\%INSTALLER% /S /D=C:\test-install > nul
   # The venv and conda envs create different install layouts.
   - if "%CONDA%" == "" ( set "PYTHON=C:\test-install\Scripts\python" )
   - if not "%CONDA%" == "" ( set "PYTHON=C:\test-install\python" )
@@ -71,8 +67,14 @@ test_script:
   - set PYTHONWARNINGS=module
   - >-
     "%PYTHON%" -m unittest -v Orange.tests Orange.widgets.tests
+  - >-
+    "%PYTHON%" -m unittest -v orangecontrib.spectroscopy.tests
+  - >-
+    "%PYTHON%" -m quasar --help
+  - >-
+    "%PYTHON%" -c "import opusFC"
   - mkdir installers
-  - move orange3\dist\%INSTALLER% installers\
+  - move dist\%INSTALLER% installers\
 
   # Log the filename and the sha checksum
   - for /f %%s in ( 'sha256sum -b installers/%INSTALLER%' ) do ( set "CHECKSUM=%%s" )
