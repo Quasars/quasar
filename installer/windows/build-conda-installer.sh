@@ -366,7 +366,7 @@ else
 fi
 
 if [[ ! "${VERSION}" ]]; then
-    echo "Cannot determine orange version from the environment spec" >&2
+    echo "Cannot determine quasar version from the environment spec" >&2
     exit 1
 fi
 
