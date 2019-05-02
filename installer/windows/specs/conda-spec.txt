@@ -74,3 +74,6 @@ https://conda.anaconda.org/conda-forge/noarch/spectral-0.19-py_1.tar.bz2#b977eab
 https://repo.anaconda.com/pkgs/main/win-64/scikit-learn-0.20.2-py36h343c172_0.tar.bz2#3bbfd70727f6a7f8b698289d4c9ed627
 https://conda.anaconda.org/conda-forge/win-64/opentsne-0.3.0-py36h830ac7b_1000.tar.bz2#d22aed931dfc491cd0503cb3f8777d59
 https://conda.anaconda.org/conda-forge/win-64/orange3-3.20.0-py36h6538335_1.tar.bz2#3de058818c477e2a736d97cde9164792
+https://quasar.codes/conda/win-64/opusfc-1.1.2-py36h8c2d366_0.tar.bz2#7650740f33b42beaa3b272ea343a5a7a
+https://quasar.codes/conda/noarch/orange-spectroscopy-0.4.1-py_0.tar.bz2#99bf1cf64d5ad9ab4f1da9c7fc94e41d
+https://quasar.codes/conda/noarch/quasar-0.3.0-py_0.tar.bz2#34d5205783b43b909d7e521e1241460d
