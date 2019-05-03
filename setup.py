@@ -6,7 +6,7 @@ from setuptools import setup, find_packages, Command
 
 NAME = "Quasar"
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 
 DESCRIPTION = "Quasar is a collection of data analysis toolboxes extending the Orange suite."
 LONG_DESCRIPTION = open(path.join(path.dirname(__file__), 'README.pypi')).read()
