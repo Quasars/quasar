@@ -22,7 +22,7 @@ requirements:
     - recommonmark
   run:
     - python
-    - orange3>=3.20.1
+    - orange3>=3.21.0
     - orange-spectroscopy>=0.4.4
 
 test:
@@ -30,6 +30,7 @@ test:
     - quasar.__main__
   commands:
     - python -m quasar --help
+    - python -m unittest -v orangecontrib.spectroscopy.tests
 
 about:
   home: https://quasar.codes/
