@@ -9,7 +9,7 @@
 --only-binary numpy,scipy,bottleneck,scikit-learn,PyQt5,opentsne
 
 numpy~=1.15.4
-scipy~=1.1.0
+scipy~=1.2.0
 AnyQt>=0.0.8
 Bottleneck~=1.2.0
 chardet~=3.0
