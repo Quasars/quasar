@@ -8,7 +8,7 @@
 
 --only-binary numpy,scipy,bottleneck,scikit-learn,PyQt5,opentsne
 
-numpy~=1.15.4
+numpy~=1.16.0
 scipy~=1.2.0
 AnyQt>=0.0.8
 Bottleneck~=1.2.0
@@ -19,7 +19,7 @@ keyring==10.3.1
 keyrings.alt==2.2
 PyQt5~=5.9.1
 pyqtgraph==0.10.0
-scikit-learn~=0.20.1
+scikit-learn~=0.21.0
 six==1.10.0
 pip~=9.0.1
 xlrd==1.0.0
@@ -27,5 +27,5 @@ matplotlib~=2.2.3
 opentsne~=0.3.0
 python-louvain>=0.13
 opusFC~=1.2.0
-Orange3==3.21.0
-orange-spectroscopy==0.4.4
+Orange3==3.22.0
+orange-spectroscopy==0.4.5

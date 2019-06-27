@@ -3,7 +3,7 @@ clone_depth: 30
 environment:
   global:
     # Commit ref/tag to checkout
-    BUILD_COMMIT: 0.4.0
+    BUILD_COMMIT: 0.5.0
 
     # Build the package locally or use the build packages from
     # conda-forge / PyPI. Unsupported!
@@ -65,15 +65,6 @@ test_script:
   # Run test suite in the installed environment.
   - set ORANGE_DEPRECATIONS_ERROR=1
   - set PYTHONWARNINGS=module
-
-  # Remove tests that fail due to scipy 1.2.0 (the problem are the tests, not the code)
-  - del "C:\test-install\lib\site-packages\Orange\tests\test_statistics.py"
-  - del "C:\test-install\lib\site-packages\Orange\tests\test_util.py"
-  # Remove tests that fail because of deprecation errors in scipy.sparse
-  - del "C:\test-install\lib\site-packages\Orange\widgets\visualize\tests\test_owsieve.py"
-  - del "C:\test-install\lib\site-packages\Orange\widgets\visualize\tests\test_owvenndiagram.py"
-  # Remove tests that fail because of wrong tests for errors
-  - del "C:\test-install\lib\site-packages\Orange\widgets\unsupervised\tests\test_owmds.py"
 
   - >-
     "%PYTHON%" -m unittest -v Orange.tests Orange.widgets.tests
