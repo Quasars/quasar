@@ -72,7 +72,7 @@ def current_version():
     return quasar_version()
 
 
-def compare_versions(latest):
+def compare_versions_messagebox(latest):
     current = current_version()
     version = pkg_resources.parse_version
     if version(latest) <= version(current):
@@ -92,3 +92,48 @@ def compare_versions(latest):
         question.clickedButton() == ok and
         QDesktopServices.openUrl(QUrl(DOWNLOAD_URL)))
     question.show()
+
+
+def compare_versions_notification(latest):
+    settings = QSettings()
+    current = current_version()
+    version = pkg_resources.parse_version
+    skipped = settings.value('startup/latest-skipped-version', "", type=str)
+    if version(latest) <= version(current) or \
+            latest == skipped:
+        return
+
+    from Orange.canvas.utils.overlay import NotificationWidget, NotificationOverlay
+    from Orange.widgets import gui
+    from AnyQt.QtGui import QIcon
+
+    questionButtons = NotificationWidget.Ok | NotificationWidget.Close
+    question = NotificationWidget(icon=QIcon(gui.resource_filename('icons/Dlg_down3.png')),
+                                  title=UPDATE_AVAILABLE_TITLE,
+                                  text='Current version: <b>{}</b><br>'
+                                       'Latest version: <b>{}</b>'.format(current, latest),
+                                  textFormat=Qt.RichText,
+                                  standardButtons=questionButtons,
+                                  acceptLabel="Download",
+                                  rejectLabel="Skip this Version")
+
+    def handle_click(b):
+        if question.buttonRole(b) == question.RejectRole:
+            settings.setValue('startup/latest-skipped-version', latest)
+        if question.buttonRole(b) == question.AcceptRole:
+            QDesktopServices.openUrl(QUrl(DOWNLOAD_URL))
+
+    question.clicked.connect(handle_click)
+
+    NotificationOverlay.registerNotification(question)
+
+
+def compare_versions(latest):
+    """
+    NotificationWidget is new in Orange 3.22.0. Replace with
+    compare_versions_notification when we are sure it is stable enough.
+    """
+    try:
+        return compare_versions_notification(latest)
+    except:
+        return compare_versions_messagebox(latest)
