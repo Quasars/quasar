@@ -21,7 +21,7 @@ environment:
       PLATTAG: win_amd64
       CONDA: C:\Miniconda36-x64\Scripts\conda
       PYTHON: C:\Miniconda36-x64\python
-      # CONDA_SPEC_FILE: installer\windows\specs\conda-spec.txt
+      CONDA_SPEC_FILE: installer\windows\specs\conda-spec.txt
 
 matrix:
   fast_finish: true
