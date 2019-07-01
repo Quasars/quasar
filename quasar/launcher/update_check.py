@@ -40,15 +40,19 @@ def check_for_updates():
 class GetLatestVersion(QThread):
     resultReady = pyqtSignal(str)
 
+    def version(self):
+        request = Request(VERSION_URL,
+                          headers={
+                              'Accept': 'text/plain',
+                              'Accept-Encoding': 'gzip, deflate',
+                              'Connection': 'close',
+                              'User-Agent': self.ua_string()})
+        contents = urlopen(request, timeout=10).read().decode()
+        return contents
+
     def run(self):
         try:
-            request = Request(VERSION_URL,
-                              headers={
-                                  'Accept': 'text/plain',
-                                  'Accept-Encoding': 'gzip, deflate',
-                                  'Connection': 'close',
-                                  'User-Agent': self.ua_string()})
-            contents = urlopen(request, timeout=10).read().decode()
+            contents = self.version()
         # Nothing that this fails with should make Orange crash
         except Exception:  # pylint: disable=broad-except
             log.exception('Failed to check for updates')
