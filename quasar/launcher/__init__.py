@@ -95,7 +95,10 @@ class Launcher:
         from AnyQt.QtCore import Qt
         from AnyQt.QtGui import QColor
         from Orange.canvas import config
-        from Orange.canvas.gui.splashscreen import SplashScreen
+        try:
+            from orangecanvas.gui.splashscreen import SplashScreen
+        except ImportError:
+            from Orange.canvas.gui.splashscreen import SplashScreen
 
         config.splash_screen = splash_screen
 
