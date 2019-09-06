@@ -4,7 +4,7 @@ os: osx
 env:
   global:
     # Commit tag/ref to checkout
-    - BUILD_COMMIT=0.4.0
+    - BUILD_COMMIT=0.6.0
 
     # If set to non empty value then Quasar is build from the checked-out
     # sources otherwise it is installed from PyPI (assuming BUILD_COMMIT

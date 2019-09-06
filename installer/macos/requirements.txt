@@ -27,5 +27,5 @@ matplotlib~=2.2.3
 opentsne~=0.3.0
 python-louvain>=0.13
 opusFC~=1.2.0
-Orange3==3.22.0
-orange-spectroscopy==0.4.5
+Orange3==3.23.0
+orange-spectroscopy==0.4.6
