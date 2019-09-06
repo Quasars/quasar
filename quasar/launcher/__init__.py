@@ -1,42 +1,54 @@
+import pkg_resources
+
+from AnyQt.QtCore import Qt
+from AnyQt.QtGui import QColor, QIcon
+
+from orangecanvas.gui.splashscreen import SplashScreen
+from Orange.canvas import config, __main__ as main, mainwindow
+
 from quasar.launcher.splash import splash_screen
 from quasar.launcher.update_check import check_for_updates
 
 
 def version():
-    import pkg_resources
     return pkg_resources.get_distribution("Quasar").version
+
+
+class QuasarConfig(config.Config):
+    ApplicationName = "Quasar"
+    ApplicationVersion = version()
+
+    @staticmethod
+    def splash_screen():
+        return splash_screen()
+
+    @staticmethod
+    def core_packages():
+        # type: () -> List[str]
+        return super(QuasarConfig, QuasarConfig).core_packages() + [
+            "orange-spectroscopy",
+        ]
+
+    @staticmethod
+    def application_icon():
+        path = pkg_resources.resource_filename(
+            __name__, "icons/quasar.svg")
+        return QIcon(path)
+
+
+class QuasarSplashScreen(SplashScreen):
+
+    def showMessage(self, message, alignment=Qt.AlignLeft, color=Qt.black):
+        super().showMessage(message, alignment=alignment, color=QColor("#ff6d00"))
 
 
 class Launcher:
     def launch(self):
-        self.fix_application_name()
+        config.Config = QuasarConfig
         self.fix_application_dirs()
-        self.fix_application_icon()
         self.replace_update_check()
         self.replace_splash_screen()
         self.main()
-
-    def fix_application_name(self):
-        from PyQt5.QtCore import QCoreApplication, QSettings
-        from Orange.canvas import config
-
-        def init():
-            """
-            Initialize the QCoreApplication.organizationDomain, applicationName,
-            applicationVersion and the default settings format. Will only run once.
-
-            .. note:: This should not be run before QApplication has been initialized.
-                      Otherwise it can break Qt's plugin search paths.
-
-            """
-            QCoreApplication.setOrganizationDomain("Quasars")
-            QCoreApplication.setApplicationName("Quasar")
-            QCoreApplication.setApplicationVersion(version())
-            QSettings.setDefaultFormat(QSettings.IniFormat)
-
-            # Make it a null op.
-            config.init = lambda: None
-        config.init = init
 
     def fix_application_dirs(self):
         import os, sys
@@ -80,35 +92,8 @@ class Launcher:
 
         environ.cache_dir = cache_dir
 
-    def fix_application_icon(self):
-        import pkg_resources
-        from Orange.canvas import config
-        from AnyQt.QtGui import QIcon
-
-        def application_icon():
-            path = pkg_resources.resource_filename(
-                __name__, "icons/quasar.svg")
-            return QIcon(path)
-        config.application_icon = application_icon
-
     def replace_splash_screen(self):
-        from AnyQt.QtCore import Qt
-        from AnyQt.QtGui import QColor
-        from Orange.canvas import config
-        try:
-            from orangecanvas.gui.splashscreen import SplashScreen
-        except ImportError:
-            from Orange.canvas.gui.splashscreen import SplashScreen
-
-        config.splash_screen = splash_screen
-
-        sm = SplashScreen.showMessage
-
-        # showing currently loading widget
-        def showMessage(self, message, alignment=Qt.AlignLeft, color=Qt.black):
-            sm(self, message, alignment=alignment, color=QColor("#ff6d00"))
-
-        SplashScreen.showMessage = showMessage
+        main.SplashScreen = QuasarSplashScreen
 
     def replace_update_check(self):
         from Orange.canvas import __main__

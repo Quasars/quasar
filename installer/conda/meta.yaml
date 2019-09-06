@@ -22,7 +22,7 @@ requirements:
     - recommonmark
   run:
     - python
-    - orange3>=3.22.0
+    - orange3>=3.23.0
     - orange-spectroscopy>=0.4.5
 
 test:
