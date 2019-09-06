@@ -37,9 +37,10 @@ class TestUpdateCheck(GuiTest):
     def test_old_messagebox(self):
         update_check.compare_versions_messagebox(NEWEST)
 
-    def test_new_notification(self):
-        with patch("Orange.canvas.utils.overlay."
-                   "NotificationOverlay.registerNotification") as rn:
+    @patch("Orange.canvas.notification_server_instance")
+    def test_new_notification(self, _):
+        with patch("Orange.canvas.notification_server_instance."
+                   "registerNotification") as rn:
             update_check.compare_versions_notification(NEWEST)
-            notification_widget = rn.call_args[0][0]
-            self.assertEqual(notification_widget.title(), "Quasar Update Available")
+            notification = rn.call_args[0][0]
+            self.assertEqual(notification.title, "Quasar Update Available")

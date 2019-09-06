@@ -13,7 +13,8 @@ from Orange.version import version as current
 log = logging.getLogger(__name__)
 VERSION_URL = 'https://quasar.biolab.si/version/'
 DOWNLOAD_URL = 'https://quasar.codes/download/'
-USER_AGENT = 'Quasar{quasar_version}:Orange{orange_version}:Python{py_version}:{platform}:{conda}'
+USER_AGENT = 'Quasar{quasar_version}:Orange{orange_version}:Python{py_version}' \
+             ':{platform}:{conda}:{uuid}'
 UPDATE_AVAILABLE_TITLE = 'Quasar Update Available'
 UPDATE_AVAILABLE_MESSAGE = (
     'A newer version of Quasar is available.<br><br>'
@@ -68,6 +69,7 @@ class GetLatestVersion(QThread):
             py_version=sys.version.split()[0],
             platform=sys.platform,
             conda='Anaconda' if is_anaconda else '',
+            uuid=QSettings().value("error-reporting/machine-id", "", str)
         )
 
 
@@ -107,34 +109,31 @@ def compare_versions_notification(latest):
             latest == skipped:
         return
 
-    from Orange.canvas.utils.overlay import NotificationWidget, NotificationOverlay
-    from Orange.widgets import gui
+    from orangecanvas.utils.overlay import Notification
+    from Orange import canvas
+    from Orange.util import resource_filename
     from AnyQt.QtGui import QIcon
 
-    questionButtons = NotificationWidget.Ok | NotificationWidget.Close
-    question = NotificationWidget(icon=QIcon(gui.resource_filename('icons/Dlg_down3.png')),
-                                  title=UPDATE_AVAILABLE_TITLE,
-                                  text='Current version: <b>{}</b><br>'
-                                       'Latest version: <b>{}</b>'.format(current, latest),
-                                  textFormat=Qt.RichText,
-                                  standardButtons=questionButtons,
-                                  acceptLabel="Download",
-                                  rejectLabel="Skip this Version")
+    notif = Notification(title=UPDATE_AVAILABLE_TITLE,
+                         text='Current version: <b>{}</b><br>'
+                              'Latest version: <b>{}</b>'.format(current, latest),
+                         accept_button_label="Download",
+                         reject_button_label="Skip this Version",
+                         icon=QIcon(resource_filename("canvas/icons/update.png")))
 
-    def handle_click(b):
-        if question.buttonRole(b) == question.RejectRole:
+    def handle_click(role):
+        if role == notif.RejectRole:
             settings.setValue('startup/latest-skipped-version', latest)
-        if question.buttonRole(b) == question.AcceptRole:
+        if role == notif.AcceptRole:
             QDesktopServices.openUrl(QUrl(DOWNLOAD_URL))
 
-    question.clicked.connect(handle_click)
-
-    NotificationOverlay.registerNotification(question)
+    notif.clicked.connect(handle_click)
+    canvas.notification_server_instance.registerNotification(notif)
 
 
 def compare_versions(latest):
     """
-    NotificationWidget is new in Orange 3.22.0. Replace with
+    New notifications of Orange 3.23. Replace with
     compare_versions_notification when we are sure it is stable enough.
     """
     try:
