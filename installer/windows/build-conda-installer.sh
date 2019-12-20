@@ -38,7 +38,7 @@ Examples
 "
 }
 
-NAME=Orange3
+NAME=Quasar
 # version is determined from the ENV_SPEC_FILE
 VERSION=
 
@@ -335,18 +335,18 @@ EOF
     mkdir -p "${DISTDIR}"
 
     makensis -DOUTFILENAME="${outpath}/${filename}" \
-             -DAPPNAME=Orange \
+             -DAPPNAME=Quasar \
              -DVERSION=${VERSION} \
              -DVERMAJOR=${major} -DVERMINOR=${minor} -DVERMICRO=${micro} \
              -DPYMAJOR=${pymajor} -DPYMINOR=${pyminor} -DPYMICRO=${pymicro} \
              -DPYARCH=${PLATTAG} \
              -DBASEDIR="${basedir}" \
              -DPYINSTALLER=${pyinstaller} \
-             -DINSTALL_REGISTRY_KEY=OrangeCanvas \
-             -DINSTALLERICON=scripts/windows/Orange.ico \
-             -DICONDIR="orange3\icons" \
+             -DINSTALL_REGISTRY_KEY=Quasar \
+             -DINSTALLERICON=installer/windows/quasar.ico \
+             -DICONDIR="quasar\icons" \
              -DLICENSE_FILE="${BASEDIR}"/license.txt \
-             -DLAUNCHERMODULE="Orange.canvas" \
+             -DLAUNCHERMODULE="quasar" \
              "${extransisparams[@]}" \
              -NOCD \
              -V4 -WX \
@@ -360,22 +360,22 @@ if [[ "${ONLINE}" == yes ]]; then
     cat > "${BASEDIR}"/conda-spec.txt < "${ENV_SPEC_FILE}"
     # extract the orange version from env spec
     VERSION=$(cat < "${BASEDIR}"/conda-spec.txt |
-              grep -E 'orange3-.*tar.bz2' |
-              sed -e 's@^.*orange3-\([^-]*\)-.*tar.bz2.*@\1@')
+              grep -E 'quasar-.*tar.bz2' |
+              sed -e 's@^.*quasar-\([^-]*\)-.*tar.bz2.*@\1@')
     PYTHON_VERSION=$(conda-env-spec-python-version \
                      < "${BASEDIR:?}"/conda-spec.txt)
 else
     conda-fetch-packages "${BASEDIR:?}"/conda-pkgs "${ENV_SPEC_FILE}"
     # extract the orange version from env spec
     VERSION=$(cat < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt |
-              grep -E 'orange3-.*tar.bz2' |
+              grep -E 'quasar-.*tar.bz2' |
               cut -d "-" -f 2)
     PYTHON_VERSION=$(conda-env-spec-python-version \
                      < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt)
 fi
 
 if [[ ! "${VERSION}" ]]; then
-    echo "Cannot determine orange version from the environment spec" >&2
+    echo "Cannot determine quasar version from the environment spec" >&2
     exit 1
 fi
 
@@ -383,6 +383,6 @@ cp "${CACHEDIR:?}/miniconda/Miniconda3-${MINICONDA_VERSION}-Windows-${CONDAPLATT
    "${BASEDIR:?}/"
 
 mkdir -p "${BASEDIR:?}/icons"
-cp scripts/windows/{Orange.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
+cp installer/windows/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
 cp "$(dirname "$0")"/sitecustomize.py "${BASEDIR:?}"/conda-pkgs
 make-installer

@@ -200,8 +200,8 @@ Var StartMenuFolder
 !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchApplication"
 !define MUI_FINISHPAGE_RUN_TEXT "Start ${APPLICATIONNAME}"
 # - add link at the bottom
-!define MUI_FINISHPAGE_LINK "orange.biolab.si"
-!define MUI_FINISHPAGE_LINK_LOCATION "http://orange.biolab.si"
+!define MUI_FINISHPAGE_LINK "quasar.codes"
+!define MUI_FINISHPAGE_LINK_LOCATION "https://quasar.codes"
 
 !insertmacro MUI_PAGE_FINISH
 
@@ -693,7 +693,7 @@ Section -Register SectionRegister
                 InstallLocation "$InstDir"
     WriteRegStr SHELL_CONTEXT \
                 "${APPLICATION_UNINSTALL_REGKEY}" \
-                URLInfoAbout http://orange.biolab.si
+                URLInfoAbout https://quasar.codes
 
     WriteRegDWORD SHELL_CONTEXT \
                   "${APPLICATION_UNINSTALL_REGKEY}" \
