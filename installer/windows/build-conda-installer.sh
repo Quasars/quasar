@@ -4,11 +4,11 @@
 set -e
 
 function usage() {
-    echo 'build-conda-installer.sh
+    echo "build-conda-installer.sh
 
 Build a conda based based windows application installer.
 
-Note: This script needs makensis and curl on $PATH
+Note: This script needs makensis and curl on \$PATH
 Note: Needs basic bash env on Windows (git-bash is sufficient/tested, but
       cygwin should work too)
 
@@ -16,12 +16,15 @@ Options:
     -b --build-base <path>  Build directory (default ./build)
     -d --dist-dir <path>    Distribution dir (default ./dist)
     --cache-dir <path>      Cache downloaded packages in DIR (the default
-                            is "build/download-cache")
+                            is \"build/download-cache\")
+    -M, --miniconda-version <version>
+                            The miniconda distribution to include in the
+                            installer (default ${MINICONDA_VERSION_DEFAULT}).
     --platform <plattag>    win32 or win_amd64
     --env-spec              An environment specification file as exported by
-                            `conda list --export --explicit --md5`
+                            \`conda list --export --explicit --md5\`
                             (the default is specs/conda-spec.txt)
-    --online (yes|no)       Build an "online" or "offline" installer.
+    --online (yes|no)       Build an \"online\" or \"offline\" installer.
                             In an online installer only the Miniconda installer
                             is included. All other packages are otherwise
                             fetched at installation time
@@ -32,21 +35,21 @@ Options:
 Examples
 
     $ ./scripts/windows/build-conda-installer.sh --online=yes
-'
+"
 }
 
-NAME=Quasar
+NAME=Orange3
 # version is determined from the ENV_SPEC_FILE
 VERSION=
 
-PYTHON=
 BUILDBASE=
 DISTDIR=
 CACHEDIR=
 
-# Python version in the Miniconda installer.
-MINICONDA_VERSION=4.7.12
-PYTHON_VERSION=3.7.0
+# Miniconda installer version; included and installed if there is no existing
+# Anaconda/Miniconda installation found on the target system.
+MINICONDA_VERSION_DEFAULT=4.7.12
+MINICONDA_VERSION=${MINICONDA_VERSION_DEFAULT}
 
 PLATTAG=win_amd64
 
@@ -71,6 +74,10 @@ while [[ "${1:0:1}" = "-" ]]; do
             CACHEDIR=${2:?}; shift 2;;
         --cache-dir=*)
             CACHEDIR=${1#*=}; shift 1;;
+        -M|--miniconda-version)
+            MINICONDA_VERSION=${2:?}; shift 2;;
+        --miniconda-version=*)
+            MINICONDA_VERSION=${1*=}; shift 1;;
         --platform)
             PLATTAG=${2:?}; shift 2;;
         --platform=*)
@@ -90,10 +97,6 @@ while [[ "${1:0:1}" = "-" ]]; do
      esac
 done
 
-if [[ ! ${PYTHON_VERSION} =~ ^([0-9]+\.){2,}[0-9]+$ ]]; then
-    echo "Invalid python version: $PYTHON_VERSION (need major.minor.micro)" >&2
-    exit 1
-fi
 
 if [[ ! ${PLATTAG:?} =~ (win32|win_amd64) ]]; then
     echo "Invalid platform tag: ${PLATTAG} (expected win32 or win_amd64)" >&2
@@ -106,10 +109,6 @@ if [[ ! "${ONLINE}" =~ ^(yes|no)$ ]]; then
     exit 1
 fi
 
-# Major.Minor
-PYTHON_VER=${PYTHON_VERSION%.*}
-# MajorMinor
-PYTAG=${PYTHON_VER/./}
 
 if [[ ${PLATTAG} == win32 ]]; then
     CONDAPLATTAG=x86
@@ -119,7 +118,7 @@ fi
 
 
 BUILDBASE=${BUILDBASE:-./build}
-BASEDIR="${BUILDBASE:?}"/temp.${PLATTAG}-${PYTHON_VER}.conda-installer
+BASEDIR="${BUILDBASE:?}"/temp.${PLATTAG}.conda-installer
 
 CACHEDIR=${CACHEDIR:-./build/download-cache}
 DISTDIR=${DISTDIR:-./dist}
@@ -177,7 +176,6 @@ fetch-miniconda() {
     local dest="${destdir}/${filename}"
     if [[ ! -f "${dest}" ]]; then
         local tmpname=$(mktemp "${dest}.XXXXX")
-        echo Downloading ${url}
         if curl -fSL -o "${tmpname}" "${url}/${filename}"; then
             mv "${tmpname}" "${dest}"
         else
@@ -185,6 +183,14 @@ fetch-miniconda() {
         fi
     fi
 }
+
+
+# extract Mayor.Minor.Micro python version string from a conda env spec file
+# contents read from stdin
+conda-env-spec-python-version() {
+    grep -E "(^|.+/)python-(\d+.\d+.\d+)" | sed -n 's@.*python-\([^-]*\)-.*$@\1@p'
+}
+
 
 # $ conda-fetch-packages DESTDIR SPECFILE
 #
@@ -272,14 +278,12 @@ fetch-files() {
                         test -f "${tmpname}" && rm -f "${tmpname}" || true;
                     }
                     trap cleanup EXIT
-                    echo Downloading ${url}
                     curl -fSL -o "${tmpname}" "${url}" || exit 1
                     mv "${tmpname}" "${cache}/${fname}"
                 )
             fi
             cp "${cache}/${fname}" "${destdir}"
         else
-            echo Downloading ${url}
             ( cd "${destdir}"; curl -fSL -O "${url}" )
         fi
     done
@@ -314,16 +318,16 @@ make-installer() {
     local major=$(version-component 1 "${versionstr}")
     local minor=$(version-component 2 "${versionstr}")
     local micro=$(version-component 3 "${versionstr}")
-    local pymajor=$(version-component 1 "${PYTHON_VERSION}")
-    local pyminor=$(version-component 2 "${PYTHON_VERSION}")
-    local pymicro=$(version-component 3 "${PYTHON_VERSION}")
+    local pymajor=$(version-component 1 "${PYTHON_VERSION:?}")
+    local pyminor=$(version-component 2 "${PYTHON_VERSION:?}")
+    local pymicro=$(version-component 3 "${PYTHON_VERSION:?}")
 
     cat <<EOF > "${BASEDIR}"/license.txt
 Acknowledgments and License Agreement
 -------------------------------------
 
 EOF
-    local licenses=( "$(dirname "$0")"/../../LICENSE )
+    local licenses=( LICENSE )
     for file in "${licenses[@]}"; do
         cat "${file}" >> "${BASEDIR}"/license.txt
         echo "" >> "${BASEDIR}"/license.txt
@@ -331,22 +335,23 @@ EOF
     mkdir -p "${DISTDIR}"
 
     makensis -DOUTFILENAME="${outpath}/${filename}" \
-             -DAPPNAME=Quasar \
+             -DAPPNAME=Orange \
              -DVERSION=${VERSION} \
              -DVERMAJOR=${major} -DVERMINOR=${minor} -DVERMICRO=${micro} \
              -DPYMAJOR=${pymajor} -DPYMINOR=${pyminor} -DPYMICRO=${pymicro} \
              -DPYARCH=${PLATTAG} \
              -DBASEDIR="${basedir}" \
              -DPYINSTALLER=${pyinstaller} \
-             -DINSTALL_REGISTRY_KEY=Quasar \
-             -DINSTALLERICON="$(dirname "$0")"/quasar.ico \
+             -DINSTALL_REGISTRY_KEY=OrangeCanvas \
+             -DINSTALLERICON=scripts/windows/Orange.ico \
+             -DICONDIR="orange3\icons" \
              -DLICENSE_FILE="${BASEDIR}"/license.txt \
+             -DLAUNCHERMODULE="Orange.canvas" \
              "${extransisparams[@]}" \
              -NOCD \
-             -V4 \
+             -V4 -WX \
              "-X!addincludedir $(win-path "${scriptdir}")" \
              "${nsis_script:?}"
-    # removed -WX because it was a problem with makensis v2.51-1 on Ubuntu
 }
 
 fetch-miniconda ${MINICONDA_VERSION} ${PLATTAG} "${CACHEDIR:?}"/miniconda
@@ -357,16 +362,20 @@ if [[ "${ONLINE}" == yes ]]; then
     VERSION=$(cat < "${BASEDIR}"/conda-spec.txt |
               grep -E 'orange3-.*tar.bz2' |
               sed -e 's@^.*orange3-\([^-]*\)-.*tar.bz2.*@\1@')
+    PYTHON_VERSION=$(conda-env-spec-python-version \
+                     < "${BASEDIR:?}"/conda-spec.txt)
 else
     conda-fetch-packages "${BASEDIR:?}"/conda-pkgs "${ENV_SPEC_FILE}"
     # extract the orange version from env spec
     VERSION=$(cat < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt |
-              grep -E 'quasar-.*tar.bz2' |
-              sed -e 's@^.*quasar-\([^-]*\)-.*tar.bz2.*@\1@')
+              grep -E 'orange3-.*tar.bz2' |
+              cut -d "-" -f 2)
+    PYTHON_VERSION=$(conda-env-spec-python-version \
+                     < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt)
 fi
 
 if [[ ! "${VERSION}" ]]; then
-    echo "Cannot determine quasar version from the environment spec" >&2
+    echo "Cannot determine orange version from the environment spec" >&2
     exit 1
 fi
 
@@ -374,6 +383,6 @@ cp "${CACHEDIR:?}/miniconda/Miniconda3-${MINICONDA_VERSION}-Windows-${CONDAPLATT
    "${BASEDIR:?}/"
 
 mkdir -p "${BASEDIR:?}/icons"
-cp "$(dirname "$0")"/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
+cp scripts/windows/{Orange.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
 cp "$(dirname "$0")"/sitecustomize.py "${BASEDIR:?}"/conda-pkgs
 make-installer
