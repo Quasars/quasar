@@ -72,7 +72,7 @@ APPDIR=${1:?"Target APPDIR argument is missing"}
 PYVER=${PYTHON_VERSION%.*}  # Major.Minor
 
 if [[ ${#PIP_REQ_ARGS[@]} -eq 0 ]]; then
-    PIP_REQ_ARGS+=( Orange3 'PyQt5~=5.12.0' 'PyQtWebEngine~=5.12.0' )
+    PIP_REQ_ARGS+=( -r "${DIR}"/requirements.txt ../.. )
 fi
 
 mkdir -p "${APPDIR}"/Contents/MacOS
@@ -98,7 +98,7 @@ ln -fs ../Frameworks/Python.framework/Versions/${PYVER}/bin/python${PYVER} \
 "${APPDIR}"/Contents/MacOS/python -m ensurepip
 "${APPDIR}"/Contents/MacOS/python -m pip install pip~=19.0 wheel
 
-cat <<'EOF' > "${APPDIR}"/Contents/MacOS/Orange
+cat <<'EOF' > "${APPDIR}"/Contents/MacOS/Quasar
 #!/bin/bash
 
 DIR=$(dirname "$0")
@@ -112,9 +112,9 @@ fi
 # Disable user site packages
 export PYTHONNOUSERSITE=1
 
-exec "${DIR}"/PythonApp -m Orange.canvas "$@"
+exec "${DIR}"/PythonApp -m quasar "$@"
 EOF
-chmod +x "${APPDIR}"/Contents/MacOS/Orange
+chmod +x "${APPDIR}"/Contents/MacOS/Quasar
 
 cat <<'EOF' > "${APPDIR}"/Contents/MacOS/pip
 #!/bin/bash
@@ -132,7 +132,7 @@ PYTHON="${APPDIR}"/Contents/MacOS/python
 
 "${PYTHON}" -m pip install --no-warn-script-location "${PIP_REQ_ARGS[@]}"
 
-VERSION=$("${PYTHON}" -m pip show orange3 | grep -E '^Version:' |
+VERSION=$("${PYTHON}" -m pip show quasar | grep -E '^Version:' |
           cut -d " " -f 2)
 
 m4 -D__VERSION__="${VERSION:?}" "${APPDIR}"/Contents/Info.plist.in \
@@ -146,6 +146,6 @@ rm "${APPDIR}"/Contents/Info.plist.in
     cleanup() { rm -r "${tempdir}"; }
     trap cleanup EXIT
     cd "${tempdir}"
-    "${PYTHON}" -m pip install --no-cache-dir --no-index orange3 PyQt5
-    "${PYTHON}" -m Orange.canvas --help > /dev/null
+    "${PYTHON}" -m pip install --no-cache-dir --no-index quasar PyQt5
+    "${PYTHON}" -m quasar --help > /dev/null
 )
