@@ -31,7 +31,7 @@ install:
         PIP_ARGS=( --pip-arg={-r,./requirements.txt,Quasar==$BUILD_COMMIT} );
     fi
   - |-
-    ./build-macos-app.sh "${PIP_ARGS[@]}" "$APP"
+    ./build-macos-app.sh "${PIP_ARGS[@]}" --python-version=3.6.8 "$APP"
 
   # Package
   - cd ../..
