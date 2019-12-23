@@ -63,6 +63,5 @@ script:
   - export TRAVIS=true
 
 after_success:
-  - shasum -a 256 quasar/dist/Quasar-*.dmg
-  - echo $(curl -fS --upload-file quasar/dist/Quasar-*.dmg https://transfer.sh/)
-
+  - shasum -a 256 quasar/dist/Quasar-$VERSION.dmg
+  - echo $(curl -fS -F"file=@quasar/dist/Quasar-$VERSION.dmg" https://file.io)
