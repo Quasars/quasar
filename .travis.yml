@@ -36,7 +36,7 @@ install:
   # Package
   - cd ../..
   - |-
-    ./installer/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
+    travis_wait ./installer/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
   - |-
     VERSION=$("$APP/Contents/MacOS/pip" show quasar | grep -E '^Version: ' | cut -d ' ' -f 2)
   - mv dist/Quasar.dmg dist/Quasar-$VERSION.dmg
