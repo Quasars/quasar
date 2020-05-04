@@ -188,7 +188,7 @@ fetch-miniconda() {
 # extract Mayor.Minor.Micro python version string from a conda env spec file
 # contents read from stdin
 conda-env-spec-python-version() {
-    grep -E '(^|\.+/)python-([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)' |
+    grep -E '(^|.+/)python-([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)' |
     sed -n 's@.*python-\([^-]*\)-.*$@\1@p'
 }
 
