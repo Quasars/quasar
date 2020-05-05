@@ -30,6 +30,7 @@ EXAMPLES
 }
 
 IDENTITY="Developer ID"
+ENTITLEMENTS=$(dirname $0)/entitlements.plist
 OUTPUT=
 
 while true; do
@@ -74,15 +75,27 @@ IMG=${WORKDIR}/${BASENAME}
 # is ${IMGRW}.sparsebundle)
 hdiutil convert -format UDSB -o "${IMGRW}" "${DMG}"
 # 'resize' the sparse image allowing growth for signing data
-# (1GB should be enough for everybody)
-hdiutil resize -size 1g "${IMGRW}".sparsebundle
+# (2GB should be enough for everybody)
+hdiutil resize -size 2g "${IMGRW}".sparsebundle
 # mount it R/W for modification
 mkdir "${MOUNT}"
 hdiutil attach "${IMGRW}".sparsebundle -readwrite -noverify -noautoopen \
         -mountpoint "${MOUNT}"
 
+# Find and sign all Mach-O binaries
+find "${MOUNT}"/*.app/Contents/Frameworks/Python.framework -type f -print0 ! \( -name "*.py" -o -name "*.pyc" \) | while IFS= read -r -d '' line; do
+    finfo=$(file -b ${line})
+    if [[ $finfo == *"Mach-O"*"executable"* ]]; then
+        codesign --verbose --sign "${IDENTITY}" -f --timestamp --entitlements "${ENTITLEMENTS}" --options=runtime "$line"
+    elif [[ $finfo == *"Mach-O"* ]]; then
+        codesign --verbose --sign "${IDENTITY}" -f --timestamp "$line"
+    fi
+done
+
+
+
 # sign app bundle
-codesign --verbose --deep --options=runtime --sign "${IDENTITY}" "${MOUNT}"/*.app
+codesign -f --verbose --deep --options=runtime --timestamp --entitlements "${ENTITLEMENTS}" --sign "${IDENTITY}" "${MOUNT}"/*.app
 
 # sanity check
 codesign --verify -vvv --deep --strict "${MOUNT}"/*.app/
