@@ -188,7 +188,8 @@ fetch-miniconda() {
 # extract Mayor.Minor.Micro python version string from a conda env spec file
 # contents read from stdin
 conda-env-spec-python-version() {
-    grep -E "(^|.+/)python-(\d+.\d+.\d+)" | sed -n 's@.*python-\([^-]*\)-.*$@\1@p'
+    grep -E '(^|\.+/)python-([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)' |
+    sed -n 's@.*python-\([^-]*\)-.*$@\1@p'
 }
 
 
@@ -204,7 +205,10 @@ conda-fetch-packages() {
     echo "@EXPLICIT" >"${destdir}/conda-spec.txt"
     (
         cd "${destdir}"
-        ls -1 *.tar.bz2
+        # list out files by creation date to (sometimes) preserve order
+        # that was in specfile (should parse specfile instead)
+        shopt -s nullglob
+        ls -1tr *.tar.bz2 *.conda
     ) >> "${destdir}/conda-spec.txt"
 }
 
@@ -379,10 +383,15 @@ if [[ ! "${VERSION}" ]]; then
     exit 1
 fi
 
+if [[ ! "${PYTHON_VERSION}" ]]; then
+    echo "Cannot determine python version from the environment spec" >&2
+    exit 1;
+fi
+
 cp "${CACHEDIR:?}/miniconda/Miniconda3-${MINICONDA_VERSION}-Windows-${CONDAPLATTAG}.exe" \
    "${BASEDIR:?}/"
 
 mkdir -p "${BASEDIR:?}/icons"
-cp installer/windows/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
+cp "$(dirname "$0")"/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
 cp "$(dirname "$0")"/sitecustomize.py "${BASEDIR:?}"/conda-pkgs
 make-installer
