@@ -13,6 +13,10 @@ if  "%PLATTAG%" == "" (
 
 "%CONDA%" config --append channels conda-forge  || exit /b !ERRORLEVEL!
 
+if "%CONDA_BUILD_VERSION%" == "" (
+    set "CONDA_BUILD_VERSION=3.17.8"
+)
+
 if not "%BUILD_LOCAL%" == "" (
     rem # Disabled local builds
 ) else (
@@ -30,7 +34,7 @@ type "%CONDA_SPEC_FILE%"
 
 bash -e installer/windows/build-conda-installer.sh ^
         --platform %PLATTAG% ^
-        --cache-dir ../cache ^
+        --cache-dir ../.cache ^
         --dist-dir dist ^
         --env-spec "%CONDA_SPEC_FILE%" ^
         --online no ^
