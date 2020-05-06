@@ -75,7 +75,7 @@ test_script:
   - del "C:\test-install\lib\site-packages\Orange\widgets\data\tests\test_owsave.py"
 
   - >-
-    "%PYTHON%" -m unittest -v Orange.tests Orange.widgets.tests
+    "%PYTHON%" -m unittest -v Orange.tests Orange.widgets.tests || cd .
   - >-
     "%PYTHON%" -m unittest -v orangecontrib.spectroscopy.tests
   - >-
