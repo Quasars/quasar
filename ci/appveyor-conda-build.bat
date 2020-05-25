@@ -13,6 +13,11 @@ if  "%PLATTAG%" == "" (
 
 "%CONDA%" config --append channels conda-forge  || exit /b !ERRORLEVEL!
 
+if not "%CONDA_USE_ONLY_TAR_BZ2%" == "" (
+    "%CONDA%" config --set use_only_tar_bz2 True  || exit /b !ERRORLEVEL!
+    "%CONDA%" clean --all --yes
+)
+
 if "%CONDA_BUILD_VERSION%" == "" (
     set "CONDA_BUILD_VERSION=3.17.8"
 )

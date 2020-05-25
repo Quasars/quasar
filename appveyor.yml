@@ -22,8 +22,10 @@ environment:
     - PYTHON_VERSION: '3.6'
       PLATTAG: win_amd64
       CONDA: C:\Miniconda36-x64\Scripts\conda
-      CONDA_BUILD_VERSION: '3.18.*'
       PYTHON: C:\Miniconda36-x64\python
+      CONDA_BUILD_VERSION: '3.18.*'
+      CONDA_USE_ONLY_TAR_BZ2: "1"
+      CONDA_SPEC_FILE:
       # CONDA_SPEC_FILE: installer\windows\specs\conda-spec.txt
 
 matrix:
