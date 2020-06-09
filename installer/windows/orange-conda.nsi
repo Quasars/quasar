@@ -408,6 +408,10 @@ Section "Miniconda ${MINICONDA_VERSION}" \
             Abort "Miniconda installation failed (error value: $0)"
         ${EndIf}
         ${GetAnyAnacondaInstall} $BasePythonPrefix $PythonInstallMode
+        ${If} $BasePythonPrefix == ""
+            Abort "No anaconda distribution found. Cannot proceed.$\r$\n \
+                   Make sure Miniconda was installed successfully."
+        ${EndIF}
         ${IfNot} ${FileExists} "$BasePythonPrefix\python.exe"
             Abort "No python.exe found in $BasePythonPrefix$\r$\n \
                    Cannot continue."
