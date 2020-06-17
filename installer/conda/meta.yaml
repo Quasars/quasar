@@ -22,14 +22,15 @@ requirements:
     - recommonmark
   run:
     - python
-    - orange3>=3.25.0
-    - orange-spectroscopy>=0.5.2
+    - orange3>=3.26.0
+    - orange-spectroscopy>=0.5.4
 
 test:
   imports:
     - quasar.__main__
   commands:
     - python -m quasar --help
+    - python -m unittest -v Orange.tests Orange.widgets.tests
     - python -m unittest -v orangecontrib.spectroscopy.tests
 
 about:
