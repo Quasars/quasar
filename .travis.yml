@@ -11,6 +11,8 @@ env:
     # is the version tag)
     - BUILD_LOCAL=0
 
+    - PYTHON_VERSION=3.7.6
+
 cache:
   ccache: true
   directories:
@@ -31,7 +33,7 @@ install:
         PIP_ARGS=( --pip-arg={-r,./requirements.txt,Quasar==$BUILD_COMMIT} );
     fi
   - |-
-    ./build-macos-app.sh "${PIP_ARGS[@]}" --python-version=3.6.8 "$APP"
+    ./build-macos-app.sh "${PIP_ARGS[@]}" --python-version=$PYTHON_VERSION "$APP"
 
   # Package
   - cd ../..
