@@ -73,9 +73,6 @@ test_script:
   - set ORANGE_DEPRECATIONS_ERROR=1
   - set PYTHONWARNINGS=module
 
-  # Remove failing test due some Ornage/spectroscopy conflick
-  - del "C:\test-install\lib\site-packages\Orange\widgets\data\tests\test_owsave.py"
-
   - >-
     "%PYTHON%" -m unittest -v Orange.tests Orange.widgets.tests || cd .
   - >-
