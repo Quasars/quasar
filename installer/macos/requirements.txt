@@ -25,7 +25,7 @@ pyqtgraph==0.10.0
 xlrd~=1.2
 xlsxwriter
 serverfiles
-opentsne~=0.3.0
+opentsne~=0.4.4
 python-louvain>=0.13
 
 matplotlib~=2.2.3
