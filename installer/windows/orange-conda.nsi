@@ -21,6 +21,7 @@
 #   conda-pkgs/
 #   install.bat
 
+Unicode True
 
 # Short name, used in paths
 !ifndef APPNAME
