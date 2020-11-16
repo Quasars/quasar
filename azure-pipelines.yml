@@ -1,0 +1,80 @@
+trigger:
+  branches:
+    include:
+      - master
+      - releases/*
+      - testing/azure/*
+
+variables:
+  REPO: https://github.com/biolab/orange3.git
+  BUILD_BRANCH: master
+  BUILD_COMMIT: 0.9.0
+  BUILD_LOCAL:
+
+  APP: "/Applications/Quasar.app"
+
+jobs:
+  - job: 'build_macos_dmg'
+    displayName: Build macOS installer
+    pool:
+      vmImage: macOS-10.14
+
+    strategy:
+      matrix:
+        PY37:
+          PYTHON_VERSION: 3.7.6
+
+    steps:
+
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.6'
+          architecture: 'x64'
+        displayName: 'Use Python 3.6'
+
+      - bash: |
+          set -e
+          if [[ $BUILD_LOCAL ]]; then
+              PIP_ARGS=( --pip-arg={-r,./installer/macos/requirements.txt,./} );
+          else
+              PIP_ARGS=( --pip-arg={-r,./installer/macos/requirements.txt,Quasar==$BUILD_COMMIT} );
+          fi
+          ./installer/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=$PYTHON_VERSION "$APP"
+        displayName: Build application bundle
+
+      - bash: |
+          set -e
+          ./installer/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
+          VERSION=$("$APP/Contents/MacOS/pip" show quasar | grep -E '^Version: ' | cut -d ' ' -f 2)
+          mv dist/Quasar.dmg dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
+          shasum -a 256 dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
+        displayName: Build dmg installer
+
+      - bash: |
+          set -e
+          mkdir -p ~/Applications
+          mv -f $APP ~/Applications/
+          APP=( ~/Applications/Quasar.app )
+          $APP/Contents/MacOS/python --version
+          $APP/Contents/MacOS/pip --version
+          $APP/Contents/MacOS/pip freeze
+
+          export ORANGE_DEPRECATIONS_ERROR=1
+          export PYTHONWARNINGS=module
+          unset TRAVIS
+          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v Orange.tests Orange.widgets.tests
+          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v orangecontrib.spectroscopy.tests
+          $APP/Contents/MacOS/Quasar --help
+          $APP/Contents/MacOS/python -c "import opusFC"
+        displayName: Run tests
+
+      - task: CopyFiles@2
+        inputs:
+          contents: 'dist/*.dmg'
+          targetFolder: $(Build.ArtifactStagingDirectory)
+          flattenFolders: true
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(Build.ArtifactStagingDirectory)
+          artifactName: 'macOS dmg installer'
