@@ -6,7 +6,7 @@
 
 --extra-index-url=https://pypi.anaconda.org/ales-erjavec/simple
 
---only-binary numpy,scipy,bottleneck,scikit-learn,PyQt5,opentsne
+--only-binary numpy,scipy,scikit-learn,PyQt5,opentsne
 
 numpy~=1.19.0
 scipy~=1.5.0
