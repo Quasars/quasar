@@ -31,4 +31,4 @@ pandas~=1.1.0
 
 opusFC~=1.2.0
 Orange3==3.27.1
-orange-spectroscopy==0.5.5
+orange-spectroscopy==0.5.6
