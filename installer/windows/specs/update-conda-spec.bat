@@ -9,7 +9,7 @@ if "%CONDA%" == "" (
 
 rem %CONDA% remove -y -n orange --all
 
-"%CONDA%" create -y -n env python=3.7.* quasar=0.9.0 ^
+"%CONDA%" create -y -n env python=3.7.* quasar=1.0.0 ^
  orange3=3.27.1 orange-widget-base=4.10.0 orange-canvas-core=0.1.18 ^
  orange-spectroscopy=0.5.7 opusFC=1.2.* ^
  keyring scipy=1.5.* numpy=1.19.* pyqt=5.12.* ^
