@@ -14,6 +14,6 @@ rem %CONDA% remove -y -n orange --all
  orange3=3.27.1 orange-widget-base=4.10.0 orange-canvas-core=0.1.18 ^
  orange-spectroscopy=0.5.7 opusFC=1.2.* ^
  keyring scipy=1.5.* numpy=1.19.* pyqt=5.12.* ^
- scikit-learn=0.23.* nomkl openblas ^
+ scikit-learn=0.23.* blas=*=openblas ^
  h5py || exit /b !ERRORLEVEL!
 "%CONDA%" list -n env --export --explicit --md5 > env-spec.txt
