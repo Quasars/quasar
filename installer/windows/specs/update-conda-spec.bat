@@ -4,8 +4,9 @@ if "%CONDA%" == "" (
     set "%CONDA%"=conda
 )
 
-"%CONDA%" config --append channels conda-forge
-"%CONDA%" config --append channels https://quasar.codes/conda/
+"%CONDA%" config --add channels conda-forge
+"%CONDA%" config --add channels https://quasar.codes/conda/
+"%CONDA%" config --set channel_priority strict
 
 rem %CONDA% remove -y -n orange --all
 
