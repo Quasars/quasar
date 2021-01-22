@@ -31,6 +31,8 @@ serverfiles
 opentsne~=0.4.3
 python-louvain>=0.13
 pandas~=1.1.0
+xgboost
+catboost
 
 opusFC~=1.2.0
 Orange3==3.27.1
