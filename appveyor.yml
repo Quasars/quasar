@@ -12,9 +12,6 @@ environment:
     BUILD_LOCAL:
 
     PIP_DISABLE_PIP_VERSION_CHECK: 1
-    # disable threaded builds on Python 3.5+ when using numpy's distutils
-    # (https://github.com/numpy/numpy/issues/7607)
-    BUILD_GLOBAL_OPTIONS: config --with-htmlhelp build -j1
 
   # Note the python version here refers to the one included in the installer
   # not the one used for building/packaging
