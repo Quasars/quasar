@@ -20,8 +20,8 @@ jobs:
 
     strategy:
       matrix:
-        PY37:
-          PYTHON_VERSION: 3.7.6
+        PY38:
+          PYTHON_VERSION: 3.8.8
 
     steps:
 

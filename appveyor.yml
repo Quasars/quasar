@@ -13,17 +13,22 @@ environment:
 
     PIP_DISABLE_PIP_VERSION_CHECK: 1
 
+    # build env dependencies for building orange3 wheels or any of its
+    # dependencies that do not have wheels available
+    BUILD_DEPS: wheel==0.29.0 pip~=19.0
+
   # Note the python version here refers to the one included in the installer
   # not the one used for building/packaging
   matrix:
-    - PYTHON_VERSION: '3.7.6'
+    - PYTHON_VERSION: '3.8.8'
       PLATTAG: win_amd64
       CONDA: C:\Miniconda37-x64\Scripts\conda
       PYTHON: C:\Miniconda37-x64\python
+      MINICONDA_VERSION: 'py38_4.9.2'
       CONDA_BUILD_VERSION: '3.18.*'
       CONDA_USE_ONLY_TAR_BZ2: "1"
       CONDA_SPEC_FILE:
-      # CONDA_SPEC_FILE: specs\windows\conda-spec.txt
+      # CONDA_SPEC_FILE: ..\specs\win\conda-spec.txt
 
 matrix:
   fast_finish: true
