@@ -22,6 +22,10 @@ if "%CONDA_BUILD_VERSION%" == "" (
     set "CONDA_BUILD_VERSION=3.17.8"
 )
 
+if "%MINICONDA_VERSION%" == "" (
+    set "MINICONDA_VERSION=4.7.12"
+)
+
 if not "%BUILD_LOCAL%" == "" (
     rem # Disabled local builds
 ) else (
@@ -61,6 +65,7 @@ bash -e scripts/windows/build-conda-installer.sh ^
         --platform %PLATTAG% ^
         --cache-dir ../.cache ^
         --dist-dir dist ^
+        --miniconda-version "%MINICONDA_VERSION%" ^
         --env-spec "%CONDA_SPEC_FILE%" ^
         --online no ^
     || exit /b !ERRORLEVEL!
