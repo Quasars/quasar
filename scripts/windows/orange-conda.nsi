@@ -401,6 +401,16 @@ Section "Miniconda ${MINICONDA_VERSION}" \
         ${Else}
             StrCpy $0 ""
         ${EndIf}
+        MessageBox MB_OKCANCEL \
+            '${APPLICATIONNAME} requires a Miniconda Python distribution \
+            installed on the system. This will be done by running a separate \
+            installer program.$\r$\n$\r$\n\
+            Click Ok to continue.' \
+            /SD IDOK IDOK continue_miniconda_ IDCANCEL abort_miniconda_
+        abort_miniconda_:
+            Abort "Aborting Miniconda installation (user cancelled)."
+        continue_miniconda_:
+            ${LogWrite} "Running miniconda installer"
         ${ExecToLog} 'cmd.exe /C "${TEMPDIR}\${PYINSTALLER}" \
                 $0 /InstallationType=$MultiUser.InstallMode \
             '
