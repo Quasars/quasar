@@ -31,7 +31,27 @@ if not "%BUILD_LOCAL%" == "" (
 echo VERSION = %VERSION%
 
 if "%CONDA_SPEC_FILE%" == "" (
-    call specs/windows/update-conda-spec.bat || exit /b !ERRORLEVEL!
+    rem # prefer conda forge
+    "%CONDA%" config --add channels conda-forge  || exit /b !ERRORLEVEL!
+    "%CONDA%" config --add channels https://quasar.codes/conda/
+    "%CONDA%" config --set channel_priority strict
+
+    "%CONDA%" create -n env --yes --use-local ^
+                 python=%PYTHON_VERSION% ^
+                 numpy=1.16.* ^
+                 scipy=1.5.* ^
+                 scikit-learn=0.23.* ^
+                 bottleneck=1.3.* ^
+                 pyqt=5.12.* ^
+                 Orange3=3.27.1 ^
+                 blas=*=openblas ^
+                 quasar=%VERSION% ^
+                 orange-spectroscopy=0.5.7 ^
+                 opusFC=1.2.* ^
+                 h5py ^
+        || exit /b !ERRORLEVEL!
+
+    "%CONDA%" list -n env --export --explicit --md5 > env-spec.txt
     set CONDA_SPEC_FILE=env-spec.txt
 )
 
