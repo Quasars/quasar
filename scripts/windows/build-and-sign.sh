@@ -7,7 +7,7 @@ BASE="$( cd "$(dirname "$0")/../.." ; pwd -P )"
 DIST="$BASE/dist"
 
 # Build new conda package
-NEW_SPEC="$BASE/specs/windows/conda-spec.txt"
+NEW_SPEC="$BASE/specs/win/conda-spec.txt"
 
 # Build new installer
 ./build-conda-installer.sh \
