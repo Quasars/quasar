@@ -7,7 +7,7 @@ trigger:
 
 variables:
   BUILD_BRANCH: master
-  BUILD_COMMIT: 1.0.0
+  BUILD_COMMIT: 1.1.0
   BUILD_LOCAL:
 
   APP: "/Applications/Quasar.app"
