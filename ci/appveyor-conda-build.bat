@@ -31,7 +31,7 @@ if not "%BUILD_LOCAL%" == "" (
 echo VERSION = %VERSION%
 
 if "%CONDA_SPEC_FILE%" == "" (
-    call scripts/windows/specs/update-conda-spec.bat || exit /b !ERRORLEVEL!
+    call specs/windows/update-conda-spec.bat || exit /b !ERRORLEVEL!
     set CONDA_SPEC_FILE=env-spec.txt
 )
 

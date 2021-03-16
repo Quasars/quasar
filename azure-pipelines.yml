@@ -34,9 +34,9 @@ jobs:
       - bash: |
           set -e
           if [[ $BUILD_LOCAL ]]; then
-              PIP_ARGS=( --pip-arg={-r,./scripts/macos/requirements.txt,./} );
+              PIP_ARGS=( --pip-arg={-r,./specs/macos/requirements.txt,./} );
           else
-              PIP_ARGS=( --pip-arg={-r,./scripts/macos/requirements.txt,Quasar==$BUILD_COMMIT} );
+              PIP_ARGS=( --pip-arg={-r,./specs/macos/requirements.txt,Quasar==$BUILD_COMMIT} );
           fi
           ./scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=$PYTHON_VERSION "$APP"
         displayName: Build application bundle

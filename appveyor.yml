@@ -26,7 +26,7 @@ environment:
       CONDA_BUILD_VERSION: '3.18.*'
       CONDA_USE_ONLY_TAR_BZ2: "1"
       CONDA_SPEC_FILE:
-      # CONDA_SPEC_FILE: installer\windows\specs\conda-spec.txt
+      # CONDA_SPEC_FILE: specs\windows\conda-spec.txt
 
 matrix:
   fast_finish: true
