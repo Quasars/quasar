@@ -347,7 +347,7 @@ EOF
              -DBASEDIR="${basedir}" \
              -DPYINSTALLER=${pyinstaller} \
              -DINSTALL_REGISTRY_KEY=Quasar \
-             -DINSTALLERICON=installer/windows/quasar.ico \
+             -DINSTALLERICON=scripts/windows/quasar.ico \
              -DICONDIR="quasar\icons" \
              -DLICENSE_FILE="${BASEDIR}"/license.txt \
              -DLAUNCHERMODULE="quasar" \

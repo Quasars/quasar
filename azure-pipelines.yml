@@ -34,16 +34,16 @@ jobs:
       - bash: |
           set -e
           if [[ $BUILD_LOCAL ]]; then
-              PIP_ARGS=( --pip-arg={-r,./installer/macos/requirements.txt,./} );
+              PIP_ARGS=( --pip-arg={-r,./scripts/macos/requirements.txt,./} );
           else
-              PIP_ARGS=( --pip-arg={-r,./installer/macos/requirements.txt,Quasar==$BUILD_COMMIT} );
+              PIP_ARGS=( --pip-arg={-r,./scripts/macos/requirements.txt,Quasar==$BUILD_COMMIT} );
           fi
-          ./installer/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=$PYTHON_VERSION "$APP"
+          ./scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=$PYTHON_VERSION "$APP"
         displayName: Build application bundle
 
       - bash: |
           set -e
-          ./installer/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
+          ./scripts/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
           VERSION=$("$APP/Contents/MacOS/pip" show quasar | grep -E '^Version: ' | cut -d ' ' -f 2)
           mv dist/Quasar.dmg dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
           shasum -a 256 dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg

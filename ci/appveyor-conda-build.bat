@@ -31,13 +31,13 @@ if not "%BUILD_LOCAL%" == "" (
 echo VERSION = %VERSION%
 
 if "%CONDA_SPEC_FILE%" == "" (
-    call installer/windows/specs/update-conda-spec.bat || exit /b !ERRORLEVEL!
+    call scripts/windows/specs/update-conda-spec.bat || exit /b !ERRORLEVEL!
     set CONDA_SPEC_FILE=env-spec.txt
 )
 
 type "%CONDA_SPEC_FILE%"
 
-bash -e installer/windows/build-conda-installer.sh ^
+bash -e scripts/windows/build-conda-installer.sh ^
         --platform %PLATTAG% ^
         --cache-dir ../.cache ^
         --dist-dir dist ^
