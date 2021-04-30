@@ -1,0 +1,126 @@
+name : Build macOS dmg
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+      branches:
+        - 'master'
+        - 'releases/**'
+        - 'testing/**'
+
+jobs:
+  build:
+    runs-on:  macos-11
+    timeout-minutes: 50
+    env:
+      REPO: https://github.com/biolab/orange3.git
+      BUILD_BRANCH: master
+      BUILD_COMMIT: FETCH_HEAD
+      BUILD_LOCAL: 1
+      APP: "/Applications/Orange3.app"
+
+      PYTHONFAULTHANDLER: 1
+      PIP_NO_PIP_VERSION_CHECK: 1
+      PIP_CACHE_DIR: .pip-cache
+      PIP_PREFER_BINARY: 1
+
+    strategy:
+      fail-fast: False
+      matrix:
+        include:
+          - python-version: 3.9.12
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Checkout orange3
+        shell: bash
+        run: |
+          set -e
+          git clone -q $REPO
+          cd orange3
+          git fetch origin $BUILD_BRANCH
+          git checkout $BUILD_COMMIT
+
+      - name: Setup Pip Cache
+        uses: actions/cache@v3
+        with:
+          path: .pip-cache
+          key: ${{ runner.os }}-py-${{ matrix.python-version }}-pip-${{ hashFiles('.github/workflows/build-macos-installer.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-${{ matrix.python-version }}-pip
+
+      - name: 'Install modified create-dmg (modified to allow longer detach timeouts)'
+        shell: bash
+        run: |
+          wget https://github.com/create-dmg/create-dmg/archive/refs/tags/v1.0.10.tar.gz
+          tar -zxvf v1.0.10.tar.gz
+          cd create-dmg-1.0.10/
+          sed -i.bu 's/MAXIMUM_UNMOUNTING_ATTEMPTS=3/MAXIMUM_UNMOUNTING_ATTEMPTS=6/g' create-dmg
+          cat create-dmg | grep MAXIMUM_UNMOUNTING_ATTEMPTS
+          make install
+          cd ..
+
+      - name: Build application bundle
+        shell: bash
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          set -e
+          cd orange3
+          if [[ $BUILD_LOCAL ]]; then
+              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,./} );
+          else
+              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,Orange3==$BUILD_COMMIT} );
+          fi
+          ../scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=${PYTHON_VERSION} "$APP"
+
+      - name: Build dmg installer
+        shell: bash
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          set -e
+          mkdir dist
+          ./scripts/macos/create-dmg-installer.sh --app "$APP" dist/Orange3.dmg
+          VERSION=$("$APP/Contents/MacOS/pip" show orange3 | grep -E '^Version: ' | cut -d ' ' -f 2)
+          mv dist/Orange3.dmg dist/Orange3-$VERSION-Python${PYTHON_VERSION}.dmg
+          shasum -a 256 dist/Orange3-$VERSION-Python${PYTHON_VERSION}.dmg
+
+      - name: Upload dmg
+        uses: actions/upload-artifact@v3
+        with:
+          name: orange-dmg-installer
+          path: dist/Orange3-*.dmg
+          if-no-files-found: error
+
+  test:
+    name: Test
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - name: Download dmg
+        uses: actions/download-artifact@v3
+        with:
+          name: orange-dmg-installer
+      - name: Mount
+        shell: bash
+        run: |
+          mkdir ./mnt
+          hdiutil attach Orange3*.dmg -noverify -noautoopen -mountpoint ./mnt
+      - name: Run tests
+        run: |
+          APP=( mnt/Orange3.app )
+          $APP/Contents/MacOS/python --version
+          $APP/Contents/MacOS/pip --version
+          $APP/Contents/MacOS/pip freeze
+
+          export ORANGE_DEPRECATIONS_ERROR=1
+          export PYTHONWARNINGS=module
+          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v Orange.tests Orange.widgets.tests
