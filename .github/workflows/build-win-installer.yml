@@ -1,0 +1,129 @@
+name : Build Windows Installer
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+      branches:
+        - 'master'
+        - 'releases/**'
+        - 'testing/**'
+
+jobs:
+  build:
+    runs-on:  windows-2019
+    timeout-minutes: 30
+    env:
+      REPO: https://github.com/biolab/orange3.git
+      BUILD_BRANCH: master
+      BUILD_COMMIT: FETCH_HEAD
+      BUILD_LOCAL: 1
+
+      PYTHONFAULTHANDLER: 1
+      PIP_NO_PIP_VERSION_CHECK: 1
+      PIP_CACHE_DIR: .pip-cache
+      PIP_PREFER_BINARY: 1
+
+      BUILD_DEPS: "wheel~=0.37.0 pip~=22.0.3"
+      ENVSPEC: ./specs/win/PY38.txt
+
+    strategy:
+      fail-fast: False
+      matrix:
+        include:
+          - python-version: "3.9.12"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Checkout orange3
+        shell: bash
+        run: |
+          set -e
+          git clone -q $REPO
+          cd orange3
+          git fetch origin $BUILD_BRANCH
+          git checkout $BUILD_COMMIT
+
+      - name: Setup Pip Cache
+        uses: actions/cache@v3
+        with:
+          path: .pip-cache
+          key: ${{ runner.os }}-py-${{ matrix.python-version }}-pip-${{ hashFiles('.github/workflows/build-win-installer.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-${{ matrix.python-version }}-pip
+
+      - name: Prepare wheels
+        shell: bash
+        run: |
+          python -m pip install $BUILD_DEPS
+          if [[ $BUILD_LOCAL ]]; then
+             PIP_ARGS=( -r $ENVSPEC ./orange3 );
+          else
+             PIP_ARGS=( -r $ENVSPEC Orange3==$BUILD_COMMIT );
+          fi
+          python -m pip wheel -w ./wheels -f ./wheels "${PIP_ARGS[@]}" orange3
+          ls ./wheels
+
+      - name: Build installer
+        shell: bash
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          PLATTAG: win_amd64
+          ENVSPEC: ./specs/win/PY38.txt
+        run: |
+          echo PATH=$PATH
+          mkdir dist
+          ./scripts/windows/build-win-installer.sh  --no-index --find-links=./wheels  --python-version $PYTHON_VERSION --platform $PLATTAG --pip-arg=--pre --pip-arg=-r --pip-arg=$ENVSPEC --pip-arg=Orange3
+
+          INSTALLER=( dist/Orange3*.exe )
+          SHA256=$( sha256sum -b $INSTALLER )
+          echo INSTALLER = $INSTALLER
+          echo SHA256 = $( sha256sum -b $INSTALLER )
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v3
+        with:
+          name: orange-win-installer
+          path: dist/Orange3-*.exe
+          if-no-files-found: error
+
+  test:
+    name: Test
+    needs: build
+    runs-on: windows-2019
+    steps:
+      - name: Download installer
+        uses: actions/download-artifact@v3
+        with:
+          name: orange-win-installer
+
+      - name: Install
+        shell: cmd
+        run: |
+          rem # Install in silent mode. Output has to be piped somewhere so the installer
+          rem # runs 'attached' to the console.
+          for %%s in ( Orange3*.exe ) do ( set "INSTALLER=%%s" )
+          echo INSTALLER = %INSTALLER%
+          %INSTALLER% /S /D=C:\test-install > nul
+      - name: Run tests
+        shell: bash
+        run: |
+          PYTHON=$(cygpath -u 'C:\test-install\Scripts\python')
+          $PYTHON --version
+          $PYTHON -m pip --version
+          $PYTHON -m pip list --format=freeze
+          # Test that orange and all dependencies are installed in a
+          # consistent state
+          $PYTHON -m pip install --no-index --no-cache-dir orange3
+
+          # Run test suite in the installed environment.
+          export ORANGE_DEPRECATIONS_ERROR=1
+          export PYTHONWARNINGS=module
+
+          $PYTHON -m unittest -v Orange.tests Orange.widgets.tests
