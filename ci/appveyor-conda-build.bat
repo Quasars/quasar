@@ -42,7 +42,7 @@ if "%CONDA_SPEC_FILE%" == "" (
 
     "%CONDA%" create -n env --yes --use-local ^
                  python=%PYTHON_VERSION% ^
-                 numpy=1.16.* ^
+                 numpy=1.19.* ^
                  scipy=1.5.* ^
                  scikit-learn=0.23.* ^
                  bottleneck=1.3.* ^
