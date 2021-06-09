@@ -1,2 +1,2 @@
-Orange3>=3.28.0
-orange-spectroscopy>=0.5.8
+Orange3>=3.29.3
+orange-spectroscopy>=0.6.0
