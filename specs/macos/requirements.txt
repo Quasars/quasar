@@ -36,7 +36,7 @@ catboost
 h5py
 
 opusFC~=1.2.0
-Orange3==3.28.0
-orange-widget-base==4.12.0
-orange-canvas-core==0.1.19
-orange-spectroscopy==0.5.8
+Orange3==3.29.3
+orange-widget-base==4.13.1
+orange-canvas-core==0.1.21
+orange-spectroscopy==0.6.0
