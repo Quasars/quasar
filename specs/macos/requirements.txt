@@ -19,8 +19,8 @@ keyrings.alt==2.2
 AnyQt~=0.0.8
 
 # PyQt==5.12.3 requires python compiled for MacOS 10.13+ to work on MacOS 11.0
-PyQt5==5.12.2
-pyqtwebengine==5.12.1
+PyQt5==5.15.4
+pyqtwebengine==5.15.4
 
 docutils~=0.16.0
 pip~=19.0
