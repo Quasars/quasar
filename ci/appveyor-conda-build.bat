@@ -48,6 +48,7 @@ if "%CONDA_SPEC_FILE%" == "" (
                  bottleneck=1.3.* ^
                  pyqt=5.12.* ^
                  Orange3=3.30.2 ^
+                 pyqtgraph=0.12.2 ^
                  blas=*=openblas ^
                  quasar=%VERSION% ^
                  orange-spectroscopy=0.6.1 ^
