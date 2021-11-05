@@ -47,10 +47,10 @@ if "%CONDA_SPEC_FILE%" == "" (
                  scikit-learn=0.23.* ^
                  bottleneck=1.3.* ^
                  pyqt=5.12.* ^
-                 Orange3=3.29.3 ^
+                 Orange3=3.30.2 ^
                  blas=*=openblas ^
                  quasar=%VERSION% ^
-                 orange-spectroscopy=0.6.0 ^
+                 orange-spectroscopy=0.6.1 ^
                  opusFC=1.2.* ^
                  h5py ^
         || exit /b !ERRORLEVEL!
