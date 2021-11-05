@@ -27,8 +27,9 @@ if not exist "%PREFIX%\python.exe" (
 
 rem # Create .condarc file that includes conda-forge channel
 rem # We need it so add-ons can be installed from conda-forge
-echo Appending conda-forge channel
+echo Appending the Quasar and conda-forge channels
 echo channels:         > "%PREFIX%\.condarc"
+echo   - https://quasar.codes/conda/  >> "%PREFIX%\.condarc"
 echo   - conda-forge  >> "%PREFIX%\.condarc"
 echo   - defaults     >> "%PREFIX%\.condarc"
 
