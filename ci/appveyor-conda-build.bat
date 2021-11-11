@@ -52,7 +52,7 @@ if "%CONDA_SPEC_FILE%" == "" (
                  blas=*=openblas ^
                  quasar=%VERSION% ^
                  orange-spectroscopy=0.6.1 ^
-                 opusFC=1.2.* ^
+                 opusFC=1.2.5 ^
                  h5py ^
         || exit /b !ERRORLEVEL!
 
