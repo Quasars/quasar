@@ -51,7 +51,7 @@ if "%CONDA_SPEC_FILE%" == "" (
                  pyqtgraph=0.12.2 ^
                  blas=*=openblas ^
                  quasar=%VERSION% ^
-                 orange-spectroscopy=0.6.1 ^
+                 orange-spectroscopy=0.6.2 ^
                  opusFC=1.2.5 ^
                  h5py ^
         || exit /b !ERRORLEVEL!
