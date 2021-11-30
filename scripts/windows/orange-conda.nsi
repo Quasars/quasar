@@ -512,8 +512,13 @@ Section "Install required packages" InstallPackages
 !else
     # Run the install via from a helper script (informative output).
     DetailPrint "Installing packages (this might take a while)"
-    ${ExecToLog} 'cmd.exe /c install.bat "$PythonPrefix" \
-                  "$BasePythonPrefix\Scripts\conda.exe"'
+    ${If} ${FileExists} "$BasePythonPrefix\condabin\conda.bat"
+        # Using newer condabin/conda.bat activation wrapper
+        StrCpy $0 "$BasePythonPrefix\condabin\conda.bat"
+    ${Else}
+        StrCpy $0 "$BasePythonPrefix\Scripts\conda.exe"
+    ${EndIf}
+    ${ExecToLog} 'cmd.exe /c install.bat "$PythonPrefix" "$0"'
 !endif # ONLINE
     Pop $0
     SetDetailsPrint none
