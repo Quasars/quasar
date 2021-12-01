@@ -40,10 +40,8 @@ for /f %%f in ( '"%CONDA%" info --root' ) do (
 rem # `conda create` (at least since 4.5) does not add the conda.bat script,
 rem # so we create it manually (has different env activation pattern).
 set "CONDA_BAT=%PREFIX%\Scripts\conda.bat"
-if not exist "%CONDA_BAT%" (
-    echo @echo off>                    "%CONDA_BAT%"
-    echo call "%CONDA%" %%*>>          "%CONDA_BAT%"
-)
+echo @echo off>                    "%CONDA_BAT%"
+echo call "%CONDA%" %%*>>          "%CONDA_BAT%"
 
 rem # same for activate.bat
 set "ACTIVATE_BAT=%PREFIX%\Scripts\activate.bat"
