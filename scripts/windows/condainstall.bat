@@ -18,10 +18,10 @@ if not exist "%PREFIX%\python.exe" (
     echo Creating a conda env in "%PREFIX%"
     rem # Create an empty initial skeleton to layout the conda, activate.bat
     rem # and other things needed to manage the environment.
-    "%CONDA%" create --yes --prefix "%PREFIX%" --file conda-spec.txt ^
+    call "%CONDA%" create --yes --prefix "%PREFIX%" --file conda-spec.txt ^
         || exit /b !ERRORLEVEL!
 ) else (
-    "%CONDA%" install --yes --prefix "%PREFIX%" --file conda-spec.txt ^
+    call "%CONDA%" install --yes --prefix "%PREFIX%" --file conda-spec.txt ^
         || exit /b !ERRORLEVEL!
 )
 
