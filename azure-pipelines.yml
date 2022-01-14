@@ -15,6 +15,7 @@ variables:
 jobs:
   - job: 'build_macos_dmg'
     displayName: Build macOS installer
+    timeoutInMinutes: 90
     pool:
       vmImage: macOS-1015
 
