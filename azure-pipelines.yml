@@ -33,6 +33,10 @@ jobs:
         displayName: 'Use Python 3.6'
 
       - bash: |
+          brew install create-dmg
+        displayName: 'Install create-dmg'
+
+      - bash: |
           set -e
           if [[ $BUILD_LOCAL ]]; then
               PIP_ARGS=( --pip-arg={-r,./specs/macos/requirements.txt,./} );
