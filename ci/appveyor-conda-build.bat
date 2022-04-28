@@ -44,15 +44,15 @@ if "%CONDA_SPEC_FILE%" == "" (
                  python=%PYTHON_VERSION% ^
                  numpy=1.19.* ^
                  scipy=1.5.* ^
-                 scikit-learn=0.23.* ^
+                 scikit-learn=1.0.1 ^
                  bottleneck=1.3.* ^
                  pyqt=5.12.* ^
-                 Orange3=3.31.1 ^
+                 Orange3=3.32.0 ^
                  pyqtgraph=0.12.2 ^
                  blas=*=openblas ^
                  quasar=%VERSION% ^
-                 orange-spectroscopy=0.6.3 ^
-                 opusFC=1.2.5 ^
+                 orange-spectroscopy=0.6.5 ^
+                 opusFC=1.3.0 ^
                  h5py ^
         || exit /b !ERRORLEVEL!
 

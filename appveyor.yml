@@ -5,7 +5,7 @@ image: Visual Studio 2019
 environment:
   global:
     # Commit ref/tag to checkout
-    BUILD_COMMIT: 1.4.0
+    BUILD_COMMIT: 1.5.0
 
     # Build the package locally or use the build packages from
     # conda-forge / PyPI. Unsupported!
