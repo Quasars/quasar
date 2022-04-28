@@ -33,8 +33,14 @@ jobs:
         displayName: 'Use Python 3.6'
 
       - bash: |
-          brew install create-dmg
-        displayName: 'Install create-dmg'
+          wget https://github.com/create-dmg/create-dmg/archive/refs/tags/v1.0.10.tar.gz
+          tar -zxvf v1.0.10.tar.gz
+          cd create-dmg-1.0.10/
+          sed -i.bu 's/MAXIMUM_UNMOUNTING_ATTEMPTS=3/MAXIMUM_UNMOUNTING_ATTEMPTS=6/g' create-dmg
+          cat create-dmg | grep MAXIMUM_UNMOUNTING_ATTEMPTS
+          make install
+          cd ..
+        displayName: 'Install modified create-dmg (modified to allow longer detach timeouts)'
 
       - bash: |
           set -e
