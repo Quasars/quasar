@@ -20,11 +20,11 @@ environment:
   # Note the python version here refers to the one included in the installer
   # not the one used for building/packaging
   matrix:
-    - PYTHON_VERSION: '3.8.8'
+    - PYTHON_VERSION: '3.9.12'
       PLATTAG: win_amd64
-      CONDA: C:\Miniconda37-x64\Scripts\conda
-      PYTHON: C:\Miniconda37-x64\python
-      MINICONDA_VERSION: 'py38_4.9.2'
+      CONDA: C:\Miniconda38-x64\Scripts\conda
+      PYTHON: C:\Miniconda38-x64\python
+      MINICONDA_VERSION: 'py39_4.12.0'
       CONDA_BUILD_VERSION: '3.18.*'
       CONDA_USE_ONLY_TAR_BZ2: "1"
       CONDA_SPEC_FILE:
