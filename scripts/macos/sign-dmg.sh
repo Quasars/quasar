@@ -83,7 +83,7 @@ hdiutil attach "${IMGRW}".sparsebundle -readwrite -noverify -noautoopen \
         -mountpoint "${MOUNT}"
 
 # Find and sign all Mach-O binaries
-find "${MOUNT}"/*.app/Contents/Frameworks/Python.framework -type f -print0 ! \( -name "*.py" -o -name "*.pyc" \) | while IFS= read -r -d '' line; do
+find "${MOUNT}"/*.app/Contents/Frameworks/Python.framework -type f ! \( -name "*.py" -o -name "*.pyc"  -o -name "*.txt" -o -name "*.qml" -o -name "*.sip" -o -name "*.pyi" \) -print0 | while IFS= read -r -d '' line; do
     finfo=$(file -b ${line})
     if [[ $finfo == *"Mach-O"*"executable"* ]]; then
         codesign --verbose --sign "${IDENTITY}" -f --timestamp --entitlements "${ENTITLEMENTS}" --options=runtime "$line"

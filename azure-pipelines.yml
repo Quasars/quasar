@@ -1,13 +1,6 @@
-trigger:
-  branches:
-    include:
-      - master
-      - releases/*
-      - testing/azure/*
-
 variables:
   BUILD_BRANCH: master
-  BUILD_COMMIT: 1.5.0
+  BUILD_COMMIT: 1.6.0
   BUILD_LOCAL:
 
   APP: "/Applications/Quasar.app"

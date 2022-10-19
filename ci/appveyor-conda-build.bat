@@ -42,16 +42,18 @@ if "%CONDA_SPEC_FILE%" == "" (
 
     "%CONDA%" create -n env --yes --use-local ^
                  python=%PYTHON_VERSION% ^
-                 numpy=1.19.* ^
-                 scipy=1.5.* ^
-                 scikit-learn=1.0.1 ^
+                 numpy=1.21.* ^
+                 scipy=1.7.* ^
+                 scikit-learn=1.1.1 ^
+                 pandas=1.4.* ^
+                 pyqtgraph=0.12.3 ^
                  bottleneck=1.3.* ^
-                 pyqt=5.12.* ^
-                 Orange3=3.32.0 ^
-                 pyqtgraph=0.12.2 ^
+                 pyqt=5.15.* ^
+                 pyqtwebengine=5.15.* ^
+                 Orange3=3.33.0 ^
                  blas=*=openblas ^
                  quasar=%VERSION% ^
-                 orange-spectroscopy=0.6.5 ^
+                 orange-spectroscopy=0.6.6 ^
                  opusFC=1.3.0 ^
                  h5py ^
         || exit /b !ERRORLEVEL!

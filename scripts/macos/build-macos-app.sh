@@ -96,7 +96,7 @@ ln -fs ../Frameworks/Python.framework/Versions/${PYVER}/bin/python${PYVER} \
     "${APPDIR}"/Contents/MacOS/python
 
 "${APPDIR}"/Contents/MacOS/python -m ensurepip
-"${APPDIR}"/Contents/MacOS/python -m pip install pip~=19.0 wheel
+"${APPDIR}"/Contents/MacOS/python -m pip install pip~=22.0.0 wheel
 
 cat <<'EOF' > "${APPDIR}"/Contents/MacOS/Quasar
 #!/bin/bash
