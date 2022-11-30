@@ -41,12 +41,11 @@ if "%CONDA_SPEC_FILE%" == "" (
     "%CONDA%" config --set channel_priority strict
 
     "%CONDA%" create -n env --yes --use-local ^
-                 python=%PYTHON_VERSION% ^
-                 numpy=1.21.* ^
-                 scipy=1.7.* ^
-                 scikit-learn=1.1.1 ^
+                 numpy=1.23.* ^
+                 scipy=1.9.* ^
+                 scikit-learn=1.1.* ^
                  pandas=1.4.* ^
-                 pyqtgraph=0.12.3 ^
+                 pyqtgraph=1.3.* ^
                  bottleneck=1.3.* ^
                  pyqt=5.15.* ^
                  pyqtwebengine=5.15.* ^
