@@ -1,4 +1,4 @@
-@echo off
+@echo on
 setlocal EnableDelayedExpansion
 
 if "%PYTHON_VERSION%" == "" (
@@ -9,6 +9,13 @@ if "%PYTHON_VERSION%" == "" (
 if  "%PLATTAG%" == "" (
     echo Missing PLATTAG variable >&2
     exit /b 1
+)
+
+rem activate the root conda environment (miniconda3 4.7.0 installs
+rem libarchive that requires this - conda cannot be used as a executable
+rem without activation first)
+if exist "%CONDA%\..\activate" (
+    call "%CONDA%\..\activate"
 )
 
 "%CONDA%" config --append channels conda-forge  || exit /b !ERRORLEVEL!
