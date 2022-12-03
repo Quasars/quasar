@@ -52,7 +52,7 @@ if "%CONDA_SPEC_FILE%" == "" (
                  scipy=1.9.* ^
                  scikit-learn=1.1.* ^
                  pandas=1.4.* ^
-                 pyqtgraph=1.3.* ^
+                 pyqtgraph=0.13.* ^
                  bottleneck=1.3.* ^
                  pyqt=5.15.* ^
                  pyqtwebengine=5.15.* ^
