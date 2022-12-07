@@ -364,16 +364,16 @@ if [[ "${ONLINE}" == yes ]]; then
     cat > "${BASEDIR}"/conda-spec.txt < "${ENV_SPEC_FILE}"
     # extract the orange version from env spec
     VERSION=$(cat < "${BASEDIR}"/conda-spec.txt |
-              grep -E 'quasar-.*tar.bz2' |
-              sed -e 's@^.*quasar-\([^-]*\)-.*tar.bz2.*@\1@')
+              grep -E '(^|.+/)quasar-([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)' |
+              sed -n 's@.*quasar-\([^-]*\)-.*$@\1@p')
     PYTHON_VERSION=$(conda-env-spec-python-version \
                      < "${BASEDIR:?}"/conda-spec.txt)
 else
     conda-fetch-packages "${BASEDIR:?}"/conda-pkgs "${ENV_SPEC_FILE}"
     # extract the orange version from env spec
     VERSION=$(cat < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt |
-              grep -E 'quasar-.*tar.bz2' |
-              cut -d "-" -f 2)
+              grep -E '(^|.+/)quasar-([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)' |
+              sed -n 's@.*quasar-\([^-]*\)-.*$@\1@p')
     PYTHON_VERSION=$(conda-env-spec-python-version \
                      < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt)
 fi
