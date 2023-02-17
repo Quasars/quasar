@@ -146,6 +146,6 @@ rm "${APPDIR}"/Contents/Info.plist.in
     cleanup() { rm -r "${tempdir}"; }
     trap cleanup EXIT
     cd "${tempdir}"
-    "${PYTHON}" -m pip install --no-cache-dir --no-index quasar PyQt5
+    "${PYTHON}" -m pip install --no-cache-dir --no-index quasar
     "${PYTHON}" -m quasar --help > /dev/null
 )
