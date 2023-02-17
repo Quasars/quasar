@@ -35,7 +35,7 @@ Example
 }
 
 
-VERSION=3.7.5
+VERSION=3.9.13
 MACOSVER=10.9
 VERBOSE_LEVEL=0
 INSTALL_CERTIFI=
@@ -49,19 +49,33 @@ verbose() {
     fi
 }
 
+python-pkg-name() {
+    local version=${1:?}
+    local macosver=${2:-10.9}
+    if [[ ${macosver} =~ 10.* ]]; then
+        osname=macosx
+    else
+        osname=macos
+    fi
+    local filename="python-${version}-${osname}${macosver}.pkg"
+    echo "${filename}"
+}
+
 python-framework-fetch-pkg() {
     local cachedir=${1:?}
     local version=${2:?}
-    local macosver=${3:-10.6}
+    local macosver=${3:-10.9}
     local versiondir=${version%%[abrpc]*}  # strip alpha, beta, rc component
-    local filename=python-${version}-macos${macosver}.pkg
+    local tmpfile=
+    local filename=
+    filename=$(python-pkg-name "$version" "$macosver")
     local url="https://www.python.org/ftp/python/${versiondir}/${filename}"
     mkdir -p "${cachedir}"
     if [[ -f "${cachedir}/${filename}" ]]; then
-        verbose 1 "python-${version}-macos{macosver}.pkg is present in cache"
+        verbose 1 "${filename} is present in cache"
         return 0
     fi
-    local tmpfile=$(mktemp "${cachedir}/${filename}"-XXXX)
+    tmpfile=$(mktemp "${cachedir}/${filename}"-XXXX)
     cleanup-on-exit() {
         if [ -f "${tmpfile}" ]; then
             rm "${tmpfile}"
@@ -71,7 +85,7 @@ python-framework-fetch-pkg() {
     (
         trap cleanup-on-exit EXIT
         verbose 1 "Fetching ${url}"
-        curl -sSL --fail -o "${tmpfile}" "${url}"
+        curl -sSL --fail -o "${tmpfile}" "${url}" || exit 1
         mv "${tmpfile}" "${cachedir}/${filename}"
     )
 }
@@ -107,7 +121,7 @@ python-framework-relocate() {
     fi
 
     shopt -s nullglob
-    local versions=( "${fmkdir}"/Versions/?.? )
+    local versions=( "${fmkdir}"/Versions/?.?* )
     shopt -u nullglob
 
     if [[ ! ${#versions[*]} == 1 ]]; then
@@ -214,6 +228,12 @@ python-framework-relocate() {
     sed -i.bck s@prefix=${anchor}'.*'@prefix=\${pcfiledir}/../..@ \
         "${libdir}"/pkgconfig/python-${ver_short}.pc
 
+    sed -i.bck s@"${anchor}/Python.framework"@"${fmkdir}"@ \
+        "${libdir}"/python${ver_short}/config-${ver_short}?-darwin/Makefile
+
+    sed -i.bck s@"${anchor}/Python.framework"@"${fmkdir}"@ \
+        "${libdir}"/python${ver_short}/_sysconfigdata_*.py
+
     # 3.6.* has bundled libssl with a hardcoded absolute openssl_{cafile,capath}
     # (need to set SSL_CERT_FILE environment var in all scripts?
     # or patch ssl.py module to add certs to default verify list?)
@@ -231,7 +251,7 @@ patch-ssl() {
     local pylibdir=$(
         cd "${prefix}";
         shopt -s failglob;
-        local path=( lib/python?.? )
+        local path=( lib/python?.?* )
         echo "${path:?}"
     )
 
@@ -259,12 +279,12 @@ EOF
 
 install-certifi() {
     local prefix=${1:?}
-    "${prefix}"/bin/python?.? -B -m ensurepip
-    "${prefix}"/bin/python?.? -B -m pip --isolated install certifi
+    "${prefix}"/bin/python? -B -m ensurepip
+    "${prefix}"/bin/python? -B -m pip --isolated install certifi
     (
         mkdir -p "${prefix}"/etc/openssl
         cd "${prefix}"/etc/openssl
-        ln -shf ../../lib/python?.?/site-packages/certifi/cacert.pem ./cert.pem
+        ln -shf ../../lib/python?.?*/site-packages/certifi/cacert.pem ./cert.pem
     )
     test -r "${prefix}"/etc/openssl/cert.pem
 }
@@ -301,7 +321,7 @@ done
 python-framework-fetch-pkg ~/.cache/pkgs/ ${VERSION} ${MACOSVER}
 python-framework-extract-pkg \
     "${1:?"FRAMEWORKPATH argument is missing"}" \
-    ~/.cache/pkgs/python-${VERSION}-macos${MACOSVER}.pkg
+    ~/.cache/pkgs/$(python-pkg-name ${VERSION} ${MACOSVER})
 
 python-framework-relocate "${1:?}"/Python.framework
 
@@ -309,10 +329,12 @@ python-framework-relocate "${1:?}"/Python.framework
 (
     cd "${1:?}"/Python.framework/Versions
     shopt -s failglob
-    ln -shf ?.? ./Current  # assuming single version framework
+    ln -shf ?.?* ./Current  # assuming single version framework
 )
+
+PYTHONPREFIX="${1:?}"/Python.framework/Versions/Current
 
 if [[ ${INSTALL_CERTIFI} ]]; then
     verbose 1 "Installing and linking certifi pypi package"
-    install-certifi "${1:?}"/Python.framework/Versions/Current
+    install-certifi "${PYTHONPREFIX}"
 fi
