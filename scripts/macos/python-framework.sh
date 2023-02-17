@@ -112,6 +112,14 @@ python-framework-extract-pkg() {
     )
 }
 
+# run install_name_tool with args and resign the resulting binary with an empty certificate
+install-name-tool-sign() {
+  install_name_tool "$@"
+  local file
+  file=${@: -1}
+  codesign -f -s - "${file}"
+}
+
 
 python-framework-relocate() {
     local fmkdir=${1:?}
@@ -143,12 +151,12 @@ python-framework-relocate() {
 
     chmod +w "${fmkdir}"/Versions/${ver_short}/Python
     # change main lib's install id
-    install_name_tool \
+    install-name-tool-sign \
         -id @rpath/Python.framework/Versions/${ver_short}/Python \
         "${fmkdir}"/Versions/${ver_short}/Python
 
     # Add the containing frameworks path to rpath
-    install_name_tool \
+    install-name-tool-sign \
         -add_rpath @loader_path/../../../ \
         "${fmkdir}"/Versions/${ver_short}/Python
 
@@ -160,14 +168,14 @@ python-framework-relocate() {
     for binname in "${binnames[@]}";
     do
         if [ -f "${bindir}/${binname}" ]; then
-            install_name_tool \
+            install-name-tool-sign \
                 -change "${anchor}"/Python.framework/Versions/${ver_short}/Python \
                         "@executable_path/../Python" \
                 "${bindir}/${binname}"
         fi
     done
 
-    install_name_tool \
+    install-name-tool-sign \
         -change "${anchor}"/Python.framework/Versions/${ver_short}/Python \
                 "@executable_path/../../../../Python" \
         "${prefix}"/Resources/Python.app/Contents/MacOS/Python
@@ -180,7 +188,7 @@ python-framework-relocate() {
             local libbasename=$(basename "${libid}")
 
             chmod +w "${libpath}"
-            install_name_tool \
+            install-name-tool-sign \
                 -id @rpath/Python.framework/Versions/${ver_short}/lib/${libbasename} \
                 "$libpath"
 
@@ -189,7 +197,7 @@ python-framework-relocate() {
             do
                 if [[ ${libref} =~ ${anchor}/Python.framework/.* ]]; then
                     local libbasename=$(basename "${libref}")
-                    install_name_tool \
+                    install-name-tool-sign \
                         -change "${libref}" @loader_path/${libbasename} \
                         "${libpath}"
 
@@ -211,7 +219,7 @@ python-framework-relocate() {
             if [[ ${libref} =~ ${strip_prefix}/.* ]]; then
                 local relpath=$(echo "${libref}" | cut -c $(( ${strip_prefixn} + 1))- )
                 # TODO: should @loader_path be preferred here?
-                install_name_tool \
+                install-name-tool-sign \
                     -change "${libref}" \
                             @rpath/Python.framework/"${relpath}" \
                     "${libpath}"
