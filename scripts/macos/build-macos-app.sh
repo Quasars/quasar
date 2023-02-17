@@ -10,6 +10,10 @@ Options:
     --python-version VERSION
         Python version to install in the application bundle (default: 3.7.5)
 
+    --macos MACOSVER
+        Minimum supported macOS version (as of 3.6.5 and 3.7.0 the python.org
+        provides binaries for 10.6 and 10.9 macOS versions)
+
     --pip-arg  ARG
         Pip install arguments to populate the python environemnt in the
         application bundle. Can be used multiple times.
@@ -41,6 +45,7 @@ DIR=$(dirname "$0")
 
 # Python version in the bundled framework
 PYTHON_VERSION=3.7.5
+MACOS=11
 
 # Pip arguments used to populate the python environment in the application
 # bundle
@@ -53,6 +58,9 @@ while [[ "${1:0:1}" == "-" ]]; do
             shift 1;;
         --python-version)
             PYTHON_VERSION=${2:?"--python-version requires an argument"}
+            shift 2;;
+        --macos)
+            MACOS=${2:?"--macos requires an argument"}
             shift 2;;
         --pip-arg=*)
             PIP_REQ_ARGS+=( "${1#*=}" )
@@ -85,7 +93,7 @@ cp -a "${DIR}"/skeleton.app/Contents/{Resources,Info.plist.in} \
 # Layout a 'relocatable' python framework in the app directory
 "${DIR}"/python-framework.sh \
     --version "${PYTHON_VERSION}" \
-    --macos 11 \
+    --macos "${MACOS}" \
     --install-certifi \
     "${APPDIR}"/Contents/Frameworks
 
