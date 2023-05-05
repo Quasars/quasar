@@ -10,7 +10,7 @@ jobs:
     displayName: Build macOS installer
     timeoutInMinutes: 90
     pool:
-      vmImage: macOS-1015
+      vmImage: macOS-11
 
     strategy:
       matrix:
