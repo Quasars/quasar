@@ -57,10 +57,10 @@ if "%CONDA_SPEC_FILE%" == "" (
                  bottleneck=1.3.* ^
                  pyqt=5.15.* ^
                  pyqtwebengine=5.15.* ^
-                 Orange3=3.34.0 ^
+                 Orange3=3.35.0 ^
                  blas=*=openblas ^
                  quasar=%VERSION% ^
-                 orange-spectroscopy=0.6.8 ^
+                 orange-spectroscopy=0.6.9 ^
                  opusFC=1.3.0 ^
                  h5py ^
         || exit /b !ERRORLEVEL!
