@@ -63,6 +63,7 @@ if "%CONDA_SPEC_FILE%" == "" (
                  orange-spectroscopy=0.6.9 ^
                  opusFC=1.3.0 ^
                  h5py ^
+                 filelock ^
         || exit /b !ERRORLEVEL!
 
     "%CONDA%" list -n env --export --explicit --md5 > env-spec.txt
