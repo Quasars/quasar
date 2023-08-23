@@ -85,7 +85,7 @@ cp -a "${DIR}"/skeleton.app/Contents/{Resources,Info.plist.in} \
 # Layout a 'relocatable' python framework in the app directory
 "${DIR}"/python-framework.sh \
     --version "${PYTHON_VERSION}" \
-    --macos 10.9 \
+    --macos 11 \
     --install-certifi \
     "${APPDIR}"/Contents/Frameworks
 

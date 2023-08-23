@@ -54,11 +54,11 @@ python-framework-fetch-pkg() {
     local version=${2:?}
     local macosver=${3:-10.6}
     local versiondir=${version%%[abrpc]*}  # strip alpha, beta, rc component
-    local filename=python-${version}-macosx${macosver}.pkg
+    local filename=python-${version}-macos${macosver}.pkg
     local url="https://www.python.org/ftp/python/${versiondir}/${filename}"
     mkdir -p "${cachedir}"
     if [[ -f "${cachedir}/${filename}" ]]; then
-        verbose 1 "python-${version}-macosx{macosver}.pkg is present in cache"
+        verbose 1 "python-${version}-macos{macosver}.pkg is present in cache"
         return 0
     fi
     local tmpfile=$(mktemp "${cachedir}/${filename}"-XXXX)
@@ -301,7 +301,7 @@ done
 python-framework-fetch-pkg ~/.cache/pkgs/ ${VERSION} ${MACOSVER}
 python-framework-extract-pkg \
     "${1:?"FRAMEWORKPATH argument is missing"}" \
-    ~/.cache/pkgs/python-${VERSION}-macosx${MACOSVER}.pkg
+    ~/.cache/pkgs/python-${VERSION}-macos${MACOSVER}.pkg
 
 python-framework-relocate "${1:?}"/Python.framework
 
