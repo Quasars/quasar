@@ -27,6 +27,8 @@ macos_arm64_dmg_task:
     - git checkout $BUILD_COMMIT
 
   build_installer_script:
+    # Layout arm64 specific Info.plist to force arm64 execution only
+    - mv -f scripts/macos/dmg-resources/Info.plist.arm64.in scripts/macos/skeleton.app/Contents/Info.plist.in
     - cd orange3
     - PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements-arm64.txt,Orange3==$BUILD_COMMIT} );
     - ../scripts/macos/build-macos-app.sh --macos 11 "${PIP_ARGS[@]}" --python-version=${PYTHON_VERSION} "$APP"
