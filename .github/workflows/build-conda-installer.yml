@@ -160,3 +160,43 @@ jobs:
           export PYTHONWARNINGS=module
 
           $PYTHON -m unittest -v Orange.tests Orange.widgets.tests
+
+
+  package_portable:
+    name: Package a portable install
+    needs: [build, test]
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Download installer
+        uses: actions/download-artifact@v3
+        with:
+          name: orange-win-conda-installer
+
+      - name: Extract installer contents
+        shell: cmd
+        run: |
+          rem # Install in silent mode. Output has to be piped somewhere so the installer
+          rem # runs 'attached' to the console.
+          for %%s in ( Orange3*.exe ) do ( set "INSTALLER=%%s" )
+          echo INSTALLER = %INSTALLER%
+          %INSTALLER% /S /D=C:\test-install > nul
+
+      - name: Package portable installer
+        shell: cmd
+        run: |
+          mkdir dist
+          ci\appveyor-make-portable.bat C:\test-install %CD%\dist\Orange.zip
+
+      - name: Upload portable installer
+        uses: actions/upload-artifact@v3
+        with:
+          name: orange-win-portable-installer
+          path: dist/Orange*.zip
+          if-no-files-found: error
