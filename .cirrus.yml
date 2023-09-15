@@ -12,6 +12,8 @@ macos_arm64_dmg_task:
     ARCH: "arm64"
     ARCHFLAGS: "-arch arm64"
     PATH: /opt/homebrew/opt/python@3.10/libexec/bin:$PATH
+    # --skip-jenkins arg to create-dmg
+    SKIP_JENKINS: "1"
 
   prerequisites_script:
     - brew install python@3.10

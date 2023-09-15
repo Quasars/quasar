@@ -60,6 +60,16 @@ mkdir -p "${TMP_TEMPLATE}"/
 # Copy the .app directory in place
 cp -a "${APP}" "${TMP_TEMPLATE}"/Quasar.app
 mkdir -p "$(dirname "${DMG}")"
+
+EXTRA_DS_STORE=()
+if [[ -n ${SKIP_JENKINS} ]]; then
+  # When create-dmg cannot control Finder.app via oascript we instead just copy
+  # a preexisting .DS_Store file in place
+  EXTRA_DS_STORE+=(
+    --skip-jenkins --add-file .DS_Store "${RES}/DS_Store" 0 0
+  )
+fi
+
 create-dmg \
   --volname "Quasar Installer" \
   --volicon "${RES}/VolumeIcon.icns" \
@@ -71,6 +81,7 @@ create-dmg \
   --hide-extension "Quasar.app" \
   --icon "Quasar.app" 95 125 \
   --app-drop-link 305 125 \
+  ${EXTRA_DS_STORE[*]} \
   "${DMG}" \
   "${TMP_TEMPLATE}"
 
