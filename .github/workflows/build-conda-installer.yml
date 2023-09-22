@@ -45,16 +45,16 @@ jobs:
         with:
           python-version: 3.9
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: mamba-org/setup-micromamba@v1
         with:
-          activate-environment: build
-          python-version: 3.11
-#          environment-file: etc/example-environment-caching.yml
-          channels: conda-forge,defaults
-          channel-priority: strict
-          use-only-tar-bz2: false
-          mamba-version: "*"
-          conda-build-version: 3.26
+          condarc: >-
+            channels:
+              - conda-forge
+              - defaults
+          environment-name: build
+          create-args: conda conda-build boa python=3.11
+          init-shell: bash cmd.exe
+          generate-run-shell: true
 
       - name: Checkout orange3
         shell: bash
@@ -65,25 +65,21 @@ jobs:
           git fetch origin $BUILD_BRANCH
           git checkout $BUILD_COMMIT
 
-      - name: Setup Pip Cache
-        uses: actions/cache@v3
-        with:
-          path: .pip-cache
-          key: ${{ runner.os }}-py-${{ matrix.python-version }}-pip-${{ hashFiles('.github/workflows/build-win-installer.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-${{ matrix.python-version }}-pip
-
       - name: Prepare conda packages
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
           if [[ $BUILD_LOCAL ]]; then
-            conda build --no-test --python $PYTHON_VERSION ./orange3/conda-recipe
+            conda mambabuild --no-test --python $PYTHON_VERSION ./orange3/conda-recipe
+            VERSION=$(cd orange3; python setup.py --version)
+            EXTRA_ARGS=(-c file:///C:/users/runneradmin/micromamba/envs/build/conda-bld)
           else
             VERSION=$BUILD_COMMIT
+            EXTRA_ARGS=()
           fi
           if [[ ! $CONDA_SPEC_FILE ]]; then
-            mamba create -n env --yes --use-local \
+            micromamba create -p ./env --yes \
+                         ${EXTRA_ARGS[*]} \
                          python=$PYTHON_VERSION \
                          numpy=1.24.* \
                          scipy=1.10.* \
@@ -95,7 +91,7 @@ jobs:
                          pyqtwebengine=5.15.* \
                          Orange3=$VERSION \
                          blas=*=openblas
-            conda list -n env --export --explicit --md5 > env-spec.txt
+            conda list -p ./env --export --explicit --md5 > env-spec.txt
             cat env-spec.txt
             echo "CONDA_SPEC_FILE=env-spec.txt" >> $GITHUB_ENV
           fi
