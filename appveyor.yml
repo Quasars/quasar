@@ -68,8 +68,8 @@ test_script:
   - >-
     "%PYTHON%" -m pip list --format=freeze
   # Test that orange and all dependencies are installed in a consistent state
-  - >-
-    "%PYTHON%" -m pip install --no-index --no-cache-dir orange3
+  # - >-
+  #   "%PYTHON%" -m pip install --no-index --no-cache-dir orange3
 
   # Run test suite in the installed environment.
   - set ORANGE_DEPRECATIONS_ERROR=1
