@@ -31,7 +31,7 @@ jobs:
       matrix:
         include:
           - python-version: "3.9.12"
-            miniconda-version: "py39_4.12.0"
+            micromamba-version: "1.5.1-0"
 
     defaults:
       run:
@@ -90,7 +90,8 @@ jobs:
                          pyqt=5.15.* \
                          pyqtwebengine=5.15.* \
                          Orange3=$VERSION \
-                         blas=*=openblas
+                         blas=*=openblas \
+                         mamba
             conda list -p ./env --export --explicit --md5 > env-spec.txt
             cat env-spec.txt
             echo "CONDA_SPEC_FILE=env-spec.txt" >> $GITHUB_ENV
@@ -99,7 +100,7 @@ jobs:
       - name: Build installer
         env:
           PLATTAG: win_amd64
-          MINICONDA_VERSION: ${{ matrix.miniconda-version }}
+          MICROMAMBA_VERSION: ${{ matrix.micromamba-version }}
         run: |
           mkdir dist
           export PATH="$(cygpath -u 'C:\Program Files (x86)\NSIS'):$PATH"
@@ -108,7 +109,7 @@ jobs:
               --platform $PLATTAG \
               --cache-dir .cache \
               --dist-dir dist \
-              --miniconda-version "$MINICONDA_VERSION" \
+              --micromamba-version "$MICROMAMBA_VERSION" \
               --env-spec "$CONDA_SPEC_FILE" \
               --online no
 
@@ -159,6 +160,13 @@ jobs:
 
           $PYTHON -m unittest -v Orange.tests Orange.widgets.tests
 
+      - name: Test conda
+        shell: cmd
+        run: |
+          C:\test-install\Scripts\conda.bat --help
+          C:\test-install\Scripts\conda.bat info
+          C:\test-install\Scripts\activate.bat
+          echo %CONDA_PREFIX%
 
   package_portable:
     name: Package a portable install
