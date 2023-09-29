@@ -32,6 +32,15 @@ macos_arm64_dmg_task:
     - cd orange3
     - PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements-arm64.txt,Orange3==$BUILD_COMMIT} );
     - ../scripts/macos/build-macos-app.sh --macos 11 "${PIP_ARGS[@]}" --python-version=${PYTHON_VERSION} "$APP"
+    - |+
+      patch "$APP"/Contents/MacOS/Orange - <<EOF
+      --- a/Orange
+      +++ b/Orange
+      @@ -1,2 +1,2 @@
+      -#!/bin/bash
+      +#!/usr/bin/arch -arm64 /bin/bash
+
+      EOF
 
   build_dmg_installer_script:
     - cd orange3
