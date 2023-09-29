@@ -1,0 +1,27 @@
+# Patch Info.plist hinting native arm64 execution
+--- a/Contents/Info.plist
++++ b/Contents/Info.plist
+@@ -46,3 +46,9 @@
+     <key>LSMinimumSystemVersion</key>
+-    <string>10.9.0</string>
++    <string>11</string>
++    <key>LSRequiresNativeExecution</key>
++    <true/>
++    <key>LSArchitecturePriority</key>
++    <array>
++        <string>arm64</string>
++    </array>
+ </dict>
+# Patch Orange startup script to force arm46 execution
+--- a/Contents/MacOS/Orange
++++ b/Contents/MacOS/Orange
+@@ -1,2 +1,2 @@
+-#!/bin/bash
++#!/usr/bin/arch -arm64 /bin/bash
+
+# Patch pip startup script to force arm46 execution
+--- a/Contents/MacOS/pip
++++ b/Contents/MacOS/pip
+@@ -1,2 +1,2 @@
+-#!/bin/bash
++#!/usr/bin/arch -arm64 /bin/bash
