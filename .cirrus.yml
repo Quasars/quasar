@@ -4,8 +4,8 @@ macos_arm64_dmg_task:
   env:
     REPO: https://github.com/biolab/orange3.git
     BUILD_BRANCH: master
-    BUILD_COMMIT: 3.36.0
-    APP: "/Applications/Orange3.app"
+    BUILD_COMMIT: 3.36.1
+    APP: "/Applications/Orange.app"
 
     PYTHON_VERSION: 3.9.12
     PIP_PREFER_BINARY: "1"
@@ -45,7 +45,7 @@ macos_arm64_dmg_task:
   test_script:
     - mkdir -p ~/Applications
     - mv -f $APP ~/Applications/
-    - APP=( ~/Applications/Orange3.app )
+    - APP=( ~/Applications/$(basename $APP) )
     - $APP/Contents/MacOS/python --version
     - $APP/Contents/MacOS/pip --version
     - $APP/Contents/MacOS/pip freeze
