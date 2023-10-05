@@ -7,6 +7,9 @@ set PREFIX=%~1
 rem Path to conda executable
 set CONDA=%~2
 
+rem Disable notices to prevent net access within the installer
+set CONDA_NUMBER_CHANNEL_NOTICES=0
+
 rem activate the root conda environment (miniconda3 4.7.0 installs
 rem libarchive that requires this - conda cannot be used as a executable
 rem without activation first)
