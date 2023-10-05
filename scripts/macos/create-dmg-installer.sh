@@ -83,7 +83,7 @@ create-dmg \
   --icon-size 75 \
   --text-size 12 \
   --hide-extension "${BASENAME}" \
-  --icon "Orange.app" 95 125 \
+  --icon "${BASENAME}" 95 125 \
   --app-drop-link 305 125 \
   ${EXTRA_DS_STORE[*]} \
   "${DMG}" \
