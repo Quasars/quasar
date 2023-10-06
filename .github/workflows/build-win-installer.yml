@@ -25,13 +25,13 @@ jobs:
       PIP_PREFER_BINARY: 1
 
       BUILD_DEPS: "wheel~=0.37.0 pip~=22.0.3"
-      ENVSPEC: ./specs/win/PY38.txt
+      ENVSPEC: ./specs/win/PY310.txt
 
     strategy:
       fail-fast: False
       matrix:
         include:
-          - python-version: "3.9.12"
+          - python-version: "3.10.11"
 
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: Checkout orange3
         shell: bash
@@ -75,7 +75,6 @@ jobs:
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
           PLATTAG: win_amd64
-          ENVSPEC: ./specs/win/PY38.txt
         run: |
           echo PATH=$PATH
           mkdir dist
