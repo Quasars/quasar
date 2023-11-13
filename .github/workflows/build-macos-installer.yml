@@ -59,11 +59,41 @@ jobs:
       - name: 'Install modified create-dmg (modified to allow longer detach timeouts)'
         shell: bash
         run: |
-          wget https://github.com/create-dmg/create-dmg/archive/refs/tags/v1.0.10.tar.gz
-          tar -zxvf v1.0.10.tar.gz
-          cd create-dmg-1.0.10/
-          sed -i.bu 's/MAXIMUM_UNMOUNTING_ATTEMPTS=3/MAXIMUM_UNMOUNTING_ATTEMPTS=6/g' create-dmg
-          cat create-dmg | grep MAXIMUM_UNMOUNTING_ATTEMPTS
+          wget https://github.com/create-dmg/create-dmg/archive/refs/tags/v1.2.1.tar.gz
+          tar -zxvf v1.2.1.tar.gz
+          cd create-dmg-1.2.1/
+          patch --ignore-whitespace create-dmg <<'EOF'
+          --- a/create-dmg        2023-11-13 15:11:49.411364880 +0100
+          +++ b/create-dmg        2023-11-13 15:20:02.373043672 +0100
+          @@ -31,7 +31,7 @@
+           SANDBOX_SAFE=0
+           BLESS=0
+           SKIP_JENKINS=0
+          -MAXIMUM_UNMOUNTING_ATTEMPTS=3
+          +MAXIMUM_UNMOUNTING_ATTEMPTS=6
+           SIGNATURE=""
+           NOTARIZE=""
+           
+          @@ -41,14 +41,17 @@
+           
+           function hdiutil_detach_retry() {
+                  # Unmount
+          +       sync --file-system "$1"
+          +       sleep 10
+                  unmounting_attempts=0
+                  until
+                          echo "Unmounting disk image..."
+                          (( unmounting_attempts++ ))
+                          hdiutil detach "$1"
+                          exit_code=$?
+          +               echo "hdiutil exited with $exit_code"
+                          (( exit_code ==  0 )) && break            # nothing goes wrong
+          -               (( exit_code != 16 )) && exit $exit_code  # exit with the original exit code
+          +               #(( exit_code != 16 )) && exit $exit_code  # exit with the original exit code
+                          # The above statement returns 1 if test failed (exit_code == 16).
+                          #   It can make the code in the {do... done} block to be executed
+                  do
+          EOF
           make install
           cd ..
 
