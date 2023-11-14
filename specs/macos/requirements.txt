@@ -22,7 +22,7 @@ PyQt5~=5.15.4
 pyqtwebengine~=5.15.4
 
 docutils~=0.18.0
-pip~=23.0.0
+pip~=23.3.1
 pyqtgraph~=0.13.1
 xlrd~=2.0
 xlsxwriter
