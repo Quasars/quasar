@@ -31,7 +31,7 @@ jobs:
       matrix:
         include:
           - python-version: "3.9.12"
-            micromamba-version: "1.5.1-0"
+            miniconda-version: "py39_4.12.0"
 
     defaults:
       run:
@@ -90,8 +90,7 @@ jobs:
                          pyqt=5.15.* \
                          pyqtwebengine=5.15.* \
                          Orange3=$VERSION \
-                         blas=*=openblas \
-                         mamba
+                         blas=*=openblas
             conda list -p ./env --export --explicit --md5 > env-spec.txt
             cat env-spec.txt
             echo "CONDA_SPEC_FILE=env-spec.txt" >> $GITHUB_ENV
@@ -100,7 +99,7 @@ jobs:
       - name: Build installer
         env:
           PLATTAG: win_amd64
-          MICROMAMBA_VERSION: ${{ matrix.micromamba-version }}
+          MINICONDA_VERSION: ${{ matrix.miniconda-version }}
         run: |
           mkdir dist
           export PATH="$(cygpath -u 'C:\Program Files (x86)\NSIS'):$PATH"
@@ -109,7 +108,7 @@ jobs:
               --platform $PLATTAG \
               --cache-dir .cache \
               --dist-dir dist \
-              --micromamba-version "$MICROMAMBA_VERSION" \
+              --miniconda-version "$MINICONDA_VERSION" \
               --env-spec "$CONDA_SPEC_FILE" \
               --online no
 
