@@ -141,11 +141,11 @@ jobs:
           rem # runs 'attached' to the console.
           for %%s in ( Orange3*.exe ) do ( set "INSTALLER=%%s" )
           echo INSTALLER = %INSTALLER%
-          %INSTALLER% /S /D=C:\test-install > nul
+          %INSTALLER% /S /D=D:\test-install > nul
       - name: Run tests
         shell: bash
         run: |
-          PYTHON=$(cygpath -u 'C:\test-install\python')
+          PYTHON=$(cygpath -u 'D:\test-install\python')
           $PYTHON --version
           $PYTHON -m pip --version
           $PYTHON -m pip list --format=freeze
@@ -162,9 +162,9 @@ jobs:
       - name: Test conda
         shell: cmd
         run: |
-          C:\test-install\Scripts\conda.bat --help
-          C:\test-install\Scripts\conda.bat info
-          C:\test-install\Scripts\activate.bat
+          D:\test-install\Scripts\conda.bat --help
+          D:\test-install\Scripts\conda.bat info
+          D:\test-install\Scripts\activate.bat
           echo %CONDA_PREFIX%
 
   package_portable:
@@ -191,13 +191,13 @@ jobs:
           rem # runs 'attached' to the console.
           for %%s in ( Orange3*.exe ) do ( set "INSTALLER=%%s" )
           echo INSTALLER = %INSTALLER%
-          %INSTALLER% /S /D=C:\test-install > nul
+          %INSTALLER% /S /D=D:\test-install > nul
 
       - name: Package portable installer
         shell: cmd
         run: |
           mkdir dist
-          ci\appveyor-make-portable.bat C:\test-install %CD%\dist\Orange.zip
+          ci\appveyor-make-portable.bat D:\test-install %CD%\dist\Orange.zip
 
       - name: Upload portable installer
         uses: actions/upload-artifact@v3
