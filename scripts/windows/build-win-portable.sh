@@ -98,21 +98,21 @@ BUILDDIR_WIN="$(cygpath -w "${BUILDDIR}")"
 
 python -m pip install pywin32
 python "${DIR}/create_shortcut.py" \
-   --target '%COMSPEC%' \
+   --target 'cmd.exe' \
    --arguments '"/C start pythonw.exe -m Orange.canvas"' \
    --working-directory "" \
    --window-style Minimized \
    --shortcut "${BUILDDIR_WIN}\Orange.lnk"
 
 python "${DIR}/create_shortcut.py" \
-   --target '%COMSPEC%' \
+   --target 'cmd.exe' \
    --arguments '"/K python.exe -m Orange.canvas -l4"' \
    --working-directory "" \
    --shortcut "${BUILDDIR_WIN}/Orange Debug.lnk"
 
 python "${DIR}/create_shortcut.py" \
-   --target '%COMSPEC%' \
-   --arguments '"/C start Orange\\pythonw.exe -m Orange.canvas"' \
+   --target 'cmd.exe' \
+   --arguments '"/C start Orange\pythonw.exe -m Orange.canvas"' \
    --working-directory "" \
    --window-style Minimized \
    --shortcut "${BUILDDIR_WIN}/../Orange.lnk"
