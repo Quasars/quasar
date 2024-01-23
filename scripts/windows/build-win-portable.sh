@@ -118,6 +118,10 @@ python "${DIR}/create_shortcut.py" \
    --shortcut "${BUILDDIR_WIN}/../Orange.lnk"
 
 pushd "${BUILDBASE}/build"
+
+echo [global]        > Orange/pip.ini
+echo prefer-binary=1 >> Orange/pip.ini
+
 zip --quiet -9 -r temp.zip Orange Orange.lnk -x '*.pyc' '*.pyo' '*/__pycache__/*'
 popd
 VERSION=$("${PYTHON}" -m pip show Orange3 | grep Version: | cut -d " " -f2)
