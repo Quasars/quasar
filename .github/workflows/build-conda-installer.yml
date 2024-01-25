@@ -38,7 +38,7 @@ jobs:
         shell: bash -l {0}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -118,7 +118,7 @@ jobs:
           echo SHA256 = $( sha256sum -b $INSTALLER )
 
       - name: Upload installer
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: orange-win-conda-installer
           path: dist/Orange3-*.exe
@@ -130,7 +130,7 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Download installer
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: orange-win-conda-installer
 
@@ -172,7 +172,7 @@ jobs:
     needs: [build, test]
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -200,7 +200,7 @@ jobs:
           ci\appveyor-make-portable.bat D:\test-install %CD%\dist\Orange.zip
 
       - name: Upload portable installer
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: orange-win-portable-installer
           path: dist/Orange*.zip
