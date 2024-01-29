@@ -44,7 +44,7 @@ jobs:
           else
               PIP_ARGS=( --pip-arg={-r,./specs/macos/requirements.txt,Quasar==$BUILD_COMMIT} );
           fi
-          ./scripts/macos/build-macos-app.sh --macos 10.9 "${PIP_ARGS[@]}" --python-version=$PYTHON_VERSION "$APP"
+          ./scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=$PYTHON_VERSION "$APP"
         displayName: Build application bundle
 
       - bash: |
