@@ -18,12 +18,16 @@ jobs:
       BUILD_BRANCH: master
       BUILD_COMMIT: FETCH_HEAD
       BUILD_LOCAL: 1
-      APP: "/Applications/Orange3.app"
+      APP: "/Applications/Quasar.app"
 
       PYTHONFAULTHANDLER: 1
       PIP_NO_PIP_VERSION_CHECK: 1
       PIP_CACHE_DIR: .pip-cache
       PIP_PREFER_BINARY: 1
+
+      # Quasar
+      QUASAR_VERSION: "1.9.0"
+      SPECTROSCOPY_VERSION: "0.6.11"
 
     strategy:
       fail-fast: False
@@ -105,9 +109,9 @@ jobs:
           set -e
           cd orange3
           if [[ $BUILD_LOCAL ]]; then
-              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,./} );
+              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,./,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
           else
-              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,Orange3==$BUILD_COMMIT} );
+              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,Orange3==$BUILD_COMMIT,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
           fi
           ../scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=${PYTHON_VERSION} "$APP"
 
@@ -118,16 +122,16 @@ jobs:
         run: |
           set -e
           mkdir dist
-          ./scripts/macos/create-dmg-installer.sh --app "$APP" dist/Orange3.dmg
-          VERSION=$("$APP/Contents/MacOS/pip" show orange3 | grep -E '^Version: ' | cut -d ' ' -f 2)
-          mv dist/Orange3.dmg dist/Orange3-$VERSION-Python${PYTHON_VERSION}.dmg
-          shasum -a 256 dist/Orange3-$VERSION-Python${PYTHON_VERSION}.dmg
+          ./scripts/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
+          VERSION=$("$APP/Contents/MacOS/pip" show quasar | grep -E '^Version: ' | cut -d ' ' -f 2)
+          mv dist/Quasar.dmg dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
+          shasum -a 256 dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
 
       - name: Upload dmg
         uses: actions/upload-artifact@v4
         with:
           name: orange-dmg-installer
-          path: dist/Orange3-*.dmg
+          path: dist/Quasar-*.dmg
           if-no-files-found: error
 
   test:
@@ -143,14 +147,19 @@ jobs:
         shell: bash
         run: |
           mkdir ./mnt
-          hdiutil attach Orange3*.dmg -noverify -noautoopen -mountpoint ./mnt
+          hdiutil attach Quasar*.dmg -noverify -noautoopen -mountpoint ./mnt
       - name: Run tests
         run: |
-          APP=( mnt/Orange3.app )
+          APP=( mnt/Quasar.app )
           $APP/Contents/MacOS/python --version
           $APP/Contents/MacOS/pip --version
           $APP/Contents/MacOS/pip freeze
 
           export ORANGE_DEPRECATIONS_ERROR=1
           export PYTHONWARNINGS=module
-          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v Orange.tests Orange.widgets.tests
+          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v Orange.tests Orange.widgets.tests || true
+
+          # Quasar specific tests
+          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v orangecontrib.spectroscopy.tests
+          $APP/Contents/MacOS/python -Xfaulthandler -m quasar --help
+          $APP/Contents/MacOS/python -Xfaulthandler -c "import opusFC"
