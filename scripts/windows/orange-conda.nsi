@@ -344,7 +344,8 @@ Function DirectoryLeave
                 MessageBox MB_OK '\
                     "$InstDir" contains a pre-existing environment \
                     that is not binary compatible with this installer.$\r$\n\
-                    Please choose another destination folder.'
+                    Uninstall the existing version of ${APPLICATIONNAME} or \
+                    choose another destination folder.'
                 Abort '$R1 $R2 != "${PYMAJOR}.${PYMINOR} ${PYARCH}"'
             ${EndIf}
             ${LogWrite} 'Found existing python in $InstDir: $R2 - $R3'

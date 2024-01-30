@@ -1,0 +1,165 @@
+name : Build macOS dmg
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+      branches:
+        - 'master'
+        - 'releases/**'
+        - 'testing/**'
+
+jobs:
+  build:
+    runs-on:  macos-11
+    timeout-minutes: 50
+    env:
+      REPO: https://github.com/biolab/orange3.git
+      BUILD_BRANCH: master
+      BUILD_COMMIT: "3.36.2"
+      BUILD_LOCAL: ""
+      APP: "/Applications/Quasar.app"
+
+      PYTHONFAULTHANDLER: 1
+      PIP_NO_PIP_VERSION_CHECK: 1
+      PIP_CACHE_DIR: .pip-cache
+      PIP_PREFER_BINARY: 1
+
+      # Quasar
+      QUASAR_VERSION: "1.9.0"
+      SPECTROSCOPY_VERSION: "0.6.11"
+
+    strategy:
+      fail-fast: False
+      matrix:
+        include:
+          - python-version: "3.10.11"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Checkout orange3
+        shell: bash
+        run: |
+          set -e
+          git clone -q $REPO
+          cd orange3
+          git fetch origin $BUILD_BRANCH
+          git checkout $BUILD_COMMIT
+
+      - name: Setup Pip Cache
+        uses: actions/cache@v3
+        with:
+          path: .pip-cache
+          key: ${{ runner.os }}-py-${{ matrix.python-version }}-pip-${{ hashFiles('.github/workflows/build-macos-installer.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-${{ matrix.python-version }}-pip
+
+      - name: 'Install modified create-dmg (modified to allow longer detach timeouts)'
+        shell: bash
+        run: |
+          wget https://github.com/create-dmg/create-dmg/archive/refs/tags/v1.2.1.tar.gz
+          tar -zxvf v1.2.1.tar.gz
+          cd create-dmg-1.2.1/
+          patch --ignore-whitespace create-dmg <<'EOF'
+          --- a/create-dmg        2023-11-13 15:11:49.411364880 +0100
+          +++ b/create-dmg        2023-11-13 15:20:02.373043672 +0100
+          @@ -31,7 +31,7 @@
+           SANDBOX_SAFE=0
+           BLESS=0
+           SKIP_JENKINS=0
+          -MAXIMUM_UNMOUNTING_ATTEMPTS=3
+          +MAXIMUM_UNMOUNTING_ATTEMPTS=6
+           SIGNATURE=""
+           NOTARIZE=""
+           
+          @@ -41,14 +41,17 @@
+           
+           function hdiutil_detach_retry() {
+                  # Unmount
+          +       sync --file-system "$1"
+          +       sleep 10
+                  unmounting_attempts=0
+                  until
+                          echo "Unmounting disk image..."
+                          (( unmounting_attempts++ ))
+                          hdiutil detach "$1"
+                          exit_code=$?
+          +               echo "hdiutil exited with $exit_code"
+                          (( exit_code ==  0 )) && break            # nothing goes wrong
+          -               (( exit_code != 16 )) && exit $exit_code  # exit with the original exit code
+          +               #(( exit_code != 16 )) && exit $exit_code  # exit with the original exit code
+                          # The above statement returns 1 if test failed (exit_code == 16).
+                          #   It can make the code in the {do... done} block to be executed
+                  do
+          EOF
+          make install
+          cd ..
+
+      - name: Build application bundle
+        shell: bash
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          set -e
+          cd orange3
+          if [[ $BUILD_LOCAL ]]; then
+              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,./,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
+          else
+              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,Orange3==$BUILD_COMMIT,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
+          fi
+          ../scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=${PYTHON_VERSION} "$APP"
+
+      - name: Build dmg installer
+        shell: bash
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          set -e
+          mkdir dist
+          ./scripts/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
+          VERSION=$("$APP/Contents/MacOS/pip" show quasar | grep -E '^Version: ' | cut -d ' ' -f 2)
+          mv dist/Quasar.dmg dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
+          shasum -a 256 dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
+
+      - name: Upload dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: orange-dmg-installer
+          path: dist/Quasar-*.dmg
+          if-no-files-found: error
+
+  test:
+    name: Test
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - name: Download dmg
+        uses: actions/download-artifact@v4
+        with:
+          name: orange-dmg-installer
+      - name: Mount
+        shell: bash
+        run: |
+          mkdir ./mnt
+          hdiutil attach Quasar*.dmg -noverify -noautoopen -mountpoint ./mnt
+      - name: Run tests
+        run: |
+          APP=( mnt/Quasar.app )
+          $APP/Contents/MacOS/python --version
+          $APP/Contents/MacOS/pip --version
+          $APP/Contents/MacOS/pip freeze
+
+          export ORANGE_DEPRECATIONS_ERROR=1
+          export PYTHONWARNINGS=module
+          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v Orange.tests Orange.widgets.tests || true
+
+          # Quasar specific tests
+          $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v orangecontrib.spectroscopy.tests
+          $APP/Contents/MacOS/python -Xfaulthandler -m quasar --help
+          $APP/Contents/MacOS/python -Xfaulthandler -c "import opusFC"

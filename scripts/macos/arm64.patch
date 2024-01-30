@@ -15,13 +15,15 @@
 # Patch Orange startup script to force arm46 execution
 --- a/Contents/MacOS/Orange
 +++ b/Contents/MacOS/Orange
-@@ -1,2 +1,2 @@
--#!/bin/bash
-+#!/usr/bin/arch -arm64 /bin/bash
+@@ -1,2 +1,4 @@
+ #!/bin/bash
++
++export ARCHPREFERENCE=arm64
 
 # Patch pip startup script to force arm46 execution
 --- a/Contents/MacOS/pip
 +++ b/Contents/MacOS/pip
-@@ -1,2 +1,2 @@
--#!/bin/bash
-+#!/usr/bin/arch -arm64 /bin/bash
+@@ -1,2 +1,4 @@
+ #!/bin/bash
++
++export ARCHPREFERENCE=arm64

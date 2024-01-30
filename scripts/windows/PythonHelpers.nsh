@@ -1,5 +1,6 @@
 
 !include TextFunc.nsh
+!include StrFunc.nsh
 
 # ${GetPythonInstallPEP514} COMPANY TAG $(user_var: INSTALL_PREFIX) $(user_var: INSTALL_MODE)
 #
@@ -73,6 +74,17 @@
     !endif
     ${GetPythonInstallPEP514} PythonCore ${__TAG} ${INSTALL_PREFIX} ${INSTALL_MODE}
     !undef __TAG
+
+    # Avoid Orange to use Python from Miniconda/Anaconda which is also present under
+    # PythonCore. The problem with this Python is that when the environment is not
+    # activated it doesn't have acess to the DLL libraries.
+    Push $1
+    ${StrStr} $1 ${INSTALL_PREFIX} "conda"
+    ${If} $1 != ""
+        StrCpy ${INSTALL_PREFIX} ""
+        StrCpy ${INSTALL_MODE} -1
+    ${EndIf}
+    Pop $1
 !macroend
 !define GetPythonInstall "!insertmacro __GET_PYTHON_INSTALL"
 
@@ -138,6 +150,86 @@
 !macroend
 !define FindAnacondaInstall "!insertmacro FindAnacondaInstallCall"
 
+Function TrimQuotes
+    Exch $R0
+    Push $R1
+
+    StrCpy $R1 $R0 1
+    StrCmp $R1 `"` 0 +2
+      StrCpy $R0 $R0 `` 1
+    StrCpy $R1 $R0 1 -1
+    StrCmp $R1 `"` 0 +2
+      StrCpy $R0 $R0 -1
+
+    Pop $R1
+    Exch $R0
+FunctionEnd
+
+# ${TrimQuotes} $(user_var: RVAL) $(user_var: OUTPUT)
+# Trims single leading and trailing double quotes (").
+!macro _TrimQuotes Input Output
+  Push `${Input}`
+  Call TrimQuotes
+  Pop ${Output}
+!macroend
+!define TrimQuotes `!insertmacro _TrimQuotes`
+
+# ${FindAnacondaInstall} ROOT_KEY $(user_var: PREFIX)
+#    ROOT_KEY: HKCU or HKLM (see ReadRegStr for details)
+#    PREFIX: User variable where the install prefix is stored. Empty if
+#            no anaconda installation was found.
+# Find a registerd anaconda python installation
+# In case there are multiple registered installs the last
+# one under 'Software\Python\ContinuumAnalytics' registry key is returned
+!macro FindAnacondaInstallViaCurrentCall ROOT_KEY PREFIX
+    !define __REG_PREFIX Software\Microsoft\Windows\CurrentVersion\Uninstall
+    Push $0
+    Push $1
+    Push $2
+    Push $3
+    Push $4
+    Push ""  # <stack> $0, $1, $2, $3, $4, ""
+    StrCpy $0 0
+    StrCpy $1 ""
+    StrCpy $2 ""
+    StrCpy $3 ""
+    StrCpy $4 ""
+    ${Do}
+        EnumRegKey $1 ${ROOT_KEY} ${__REG_PREFIX} $0
+        ${If} $1 != ""
+            ReadRegStr $2 ${ROOT_KEY} \
+                            "${__REG_PREFIX}\$1" "DisplayName"
+            ${If} $2 != ""
+                ${StrStr} $3 $2 "Miniconda3"
+                ${StrStr} $4 $2 "Anaconda3"
+                ${LogWrite} "   $3  $4"
+                ${If} $3 != ""
+                ${OrIf} $4 != ""
+                    ReadRegStr $2 ${ROOT_KEY} \
+                           "${__REG_PREFIX}\$1" "UninstallString"
+                    ${TrimQuotes} $2 $2
+                    ${GetParent} $2 $1
+                    Exch $1  # <stack> $0, $1, $2, $3, $4, prefix
+                ${EndIf}
+            ${EndIf}
+        ${EndIf}
+        IntOp $0 $0 + 1
+    ${LoopUntil} $1 == ""
+    Exch      # <stack> $0, $1, $2, $3, prefix, $4
+    Pop $4    # <stack> $0, $1, $2, $3, prefix
+    Exch      # <stack> $0, $1, $2, prefix, $3
+    Pop $3    # <stack> $0, $1, $2, prefix
+    Exch      # <stack> $0, $1, prefix, $2
+    Pop $2    # <stack> $0, $1, prefix
+    Exch      # <stack> $0, prefix, $1
+    Pop $1    # <stack> $0, prefix
+    Exch      # <stack> prefix, $0
+    Pop $0
+    Pop ${PREFIX}
+    !undef __REG_PREFIX
+!macroend
+!define FindAnacondaInstallViaCurrent "!insertmacro FindAnacondaInstallViaCurrentCall"
+
 !macro GetAnyAnacondaInstalCall INSTALL_PREFIX INSTALL_MODE
     ${FindAnacondaInstall} HKCU ${INSTALL_PREFIX}
     ${LogWrite} "Anaconda in HKCU: ${INSTALL_PREFIX}"
@@ -151,6 +243,21 @@
         ${Endif}
     ${Else}
         StrCpy ${INSTALL_MODE} 0
+    ${EndIf}
+    ${If} ${INSTALL_PREFIX} == ""
+        ${FindAnacondaInstallViaCurrent} HKCU ${INSTALL_PREFIX}
+        ${LogWrite} "Anaconda Uninstall in HKCU: ${INSTALL_PREFIX}"
+        ${If} ${INSTALL_PREFIX} == ""
+            ${FindAnacondaInstallViaCurrent} HKLM ${INSTALL_PREFIX}
+            ${LogWrite} "Anaconda Uninstall in HKLM: ${INSTALL_PREFIX}"
+            ${If} ${INSTALL_PREFIX} != ""
+                StrCpy ${INSTALL_MODE} 1
+            ${Else}
+                StrCpy ${INSTALL_MODE} -1
+            ${Endif}
+        ${Else}
+            StrCpy ${INSTALL_MODE} 0
+        ${EndIf}
     ${EndIf}
 !macroend
 !define GetAnyAnacondaInstall "!insertmacro GetAnyAnacondaInstalCall"

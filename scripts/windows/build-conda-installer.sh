@@ -347,13 +347,13 @@ EOF
              -DBASEDIR="${basedir}" \
              -DPYINSTALLER=${pyinstaller} \
              -DINSTALL_REGISTRY_KEY=Quasar \
-             -DINSTALLERICON=scripts/windows/quasar.ico \
+             -DINSTALLERICON="$(win-path "${scriptdir}")/quasar.ico" \
              -DICONDIR="quasar\icons" \
              -DLICENSE_FILE="${BASEDIR}"/license.txt \
              -DLAUNCHERMODULE="quasar" \
              "${extransisparams[@]}" \
              -NOCD \
-             -V4 -WX \
+             -V4 \
              "-X!addincludedir $(win-path "${scriptdir}")" \
              "${nsis_script:?}"
 }
