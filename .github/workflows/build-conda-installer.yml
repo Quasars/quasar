@@ -26,6 +26,10 @@ jobs:
       CONDA_BUILD_VERSION: "3.26.*"
       # CONDA_SPEC_FILE: ..\specs\win\conda-spec.txt
 
+      # Quasar
+      QUASAR_VERSION: "1.9.0"
+      SPECTROSCOPY_VERSION: "0.6.11"
+
     strategy:
       fail-fast: False
       matrix:
@@ -49,6 +53,7 @@ jobs:
         with:
           condarc: >-
             channels:
+              - https://quasar.codes/conda/
               - conda-forge
               - defaults
           environment-name: build
@@ -90,7 +95,11 @@ jobs:
                          pyqt=5.15.* \
                          pyqtwebengine=5.15.* \
                          Orange3=$VERSION \
-                         blas=*=openblas
+                         blas=*=openblas \
+                         quasar=$QUASAR_VERSION \
+                         orange-spectroscopy=$SPECTROSCOPY_VERSION \
+                         opusFC=1.3.0 \
+                         h5py
             conda list -p ./env --export --explicit --md5 > env-spec.txt
             cat env-spec.txt
             echo "CONDA_SPEC_FILE=env-spec.txt" >> $GITHUB_ENV
@@ -112,7 +121,7 @@ jobs:
               --env-spec "$CONDA_SPEC_FILE" \
               --online no
 
-          INSTALLER=( dist/Orange3*.exe )
+          INSTALLER=( dist/Quasar-*.exe )
           SHA256=$( sha256sum -b $INSTALLER )
           echo INSTALLER = $INSTALLER
           echo SHA256 = $( sha256sum -b $INSTALLER )
@@ -121,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: orange-win-conda-installer
-          path: dist/Orange3-*.exe
+          path: dist/Quasar-*.exe
           if-no-files-found: error
 
   test:
@@ -139,7 +148,7 @@ jobs:
         run: |
           rem # Install in silent mode. Output has to be piped somewhere so the installer
           rem # runs 'attached' to the console.
-          for %%s in ( Orange3*.exe ) do ( set "INSTALLER=%%s" )
+          for %%s in ( Quasar-*.exe ) do ( set "INSTALLER=%%s" )
           echo INSTALLER = %INSTALLER%
           %INSTALLER% /S /D=D:\test-install > nul
       - name: Run tests
@@ -158,6 +167,11 @@ jobs:
           export PYTHONWARNINGS=module
 
           $PYTHON -m unittest -v Orange.tests Orange.widgets.tests
+
+          # Quasar specific tests
+          $PYTHON -m unittest -v orangecontrib.spectroscopy.tests
+          $PYTHON -m quasar --help
+          $PYTHON -c "import opusFC"
 
       - name: Test conda
         shell: cmd
