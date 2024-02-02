@@ -387,11 +387,15 @@ FunctionEnd
             StrCpy $1 "0"
         ${EndIf}
         ${If} ${Silent}
-            DetailPrint 'Executing: "${INSTALLER}" -quiet InstallAllUsers=$1'
-            nsExec::ExecToLog '"${INSTALLER}" -quiet InstallAllUsers=$1'
+            DetailPrint 'Executing: "${INSTALLER}" -quiet InstallAllUsers=$1 \
+                InstallLauncherAllUsers=$1'
+            nsExec::ExecToLog '"${INSTALLER}" -quiet InstallAllUsers=$1 \
+                InstallLauncherAllUsers=$1'
         ${Else}
-            DetailPrint 'Executing: "${INSTALLER}" InstallAllUsers=$1'
-            nsExec::ExecToLog '"${INSTALLER}" InstallAllUsers=$1'
+            DetailPrint 'Executing: "${INSTALLER}" InstallAllUsers=$1 \
+                InstallLauncherAllUsers=$1'
+            nsExec::ExecToLog '"${INSTALLER}" InstallAllUsers=$1 \
+                InstallLauncherAllUsers=$1'
         ${EndIf}
     ${Else}
         Abort "PyInstall Error: ${INSTALLER} - invalid filename (extension)"
