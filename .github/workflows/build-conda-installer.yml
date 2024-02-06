@@ -28,7 +28,7 @@ jobs:
 
       # Quasar
       QUASAR_VERSION: "1.9.0"
-      SPECTROSCOPY_VERSION: "0.6.11"
+      SPECTROSCOPY_VERSION: "0.6.12"
 
     strategy:
       fail-fast: False
