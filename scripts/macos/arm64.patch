@@ -13,8 +13,8 @@
 +    </array>
  </dict>
 # Patch Orange startup script to force arm46 execution
---- a/Contents/MacOS/Orange
-+++ b/Contents/MacOS/Orange
+--- a/Contents/MacOS/Quasar
++++ b/Contents/MacOS/Quasar
 @@ -1,2 +1,4 @@
  #!/bin/bash
 +
