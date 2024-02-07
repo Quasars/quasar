@@ -44,7 +44,7 @@ macos_arm64_dmg_task:
       VERSION=`$APP/Contents/MacOS/pip show quasar | grep -E '^Version: ' | cut -d ' ' -f 2`
     - mv dist/Quasar.dmg dist/Quasar-$VERSION-Python${PYTHON_VERSION}-${ARCH}.dmg
     - shasum -a 256 dist/Quasar-$VERSION-Python${PYTHON_VERSION}-${ARCH}.dmg
-    - mv dist/Orange3-$VERSION-Python${PYTHON_VERSION}-${ARCH}.dmg ../dist
+    - mv dist/Quasar-$VERSION-Python${PYTHON_VERSION}-${ARCH}.dmg ../dist
 
   test_script:
     - mkdir -p ~/Applications
