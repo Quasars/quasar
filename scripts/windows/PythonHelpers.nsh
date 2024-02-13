@@ -75,15 +75,21 @@
     ${GetPythonInstallPEP514} PythonCore ${__TAG} ${INSTALL_PREFIX} ${INSTALL_MODE}
     !undef __TAG
 
-    # Avoid Orange to use Python from Miniconda/Anaconda which is also present under
-    # PythonCore. The problem with this Python is that when the environment is not
-    # activated it doesn't have acess to the DLL libraries.
+    # Avoid Ana/Miniconda Python or Python from Microsoft Store
+    # - Python from Miniconda/Anaconda is also present in PythonCore registry. 
+    #   This Python doesn't have acess to the DLL libraries when environment is not activated.
+    # - Python from Microsoft Store is stored in WindowsApps directory which have limited 
+    #   privilegies - e.g. it is not possible to call it by path from registry
     Push $1
-    ${StrStr} $1 ${INSTALL_PREFIX} "conda"
+    Push $2
+    ${StrStr} $1 ${INSTALL_PREFIX} "conda"  # check Conda Python
+    ${StrStr} $2 ${INSTALL_PREFIX} "Program Files\WindowsApps"  # check Python from MS store
     ${If} $1 != ""
+    ${OrIf} $2 != ""
         StrCpy ${INSTALL_PREFIX} ""
         StrCpy ${INSTALL_MODE} -1
     ${EndIf}
+    Pop $2
     Pop $1
 !macroend
 !define GetPythonInstall "!insertmacro __GET_PYTHON_INSTALL"
