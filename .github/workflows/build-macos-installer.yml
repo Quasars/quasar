@@ -11,14 +11,13 @@ on:
 
 jobs:
   build:
-    runs-on:  macos-11
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 50
     env:
       REPO: https://github.com/biolab/orange3.git
       BUILD_BRANCH: master
       BUILD_COMMIT: "3.36.2"
       BUILD_LOCAL: ""
-      APP: "/Applications/Quasar.app"
 
       PYTHONFAULTHANDLER: 1
       PIP_NO_PIP_VERSION_CHECK: 1
@@ -33,7 +32,16 @@ jobs:
       fail-fast: False
       matrix:
         include:
-          - python-version: "3.10.11"
+          - os: macos-11
+            arch: x86_64
+            python-version: "3.10.11"
+            req: ../specs/macos/requirements.txt
+            app: "/Applications/Quasar.app"
+          - os: macos-14
+            arch: arm64
+            python-version: "3.10.11"
+            req: ../specs/macos/requirements-arm64.txt
+            app: "/Applications/Quasar-M.app"
 
     steps:
       - uses: actions/checkout@v4
@@ -98,51 +106,71 @@ jobs:
                           #   It can make the code in the {do... done} block to be executed
                   do
           EOF
-          make install
+          sudo make install
           cd ..
 
       - name: Build application bundle
         shell: bash
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
+          REQ: ${{ matrix.req }}
+          APP: ${{ matrix.app }}
         run: |
           set -e
           cd orange3
           if [[ $BUILD_LOCAL ]]; then
-              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,./,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
+              PIP_ARGS=( --pip-arg={-r,$REQ,./,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
           else
-              PIP_ARGS=( --pip-arg={-r,../specs/macos/requirements.txt,Orange3==$BUILD_COMMIT,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
+              PIP_ARGS=( --pip-arg={-r,$REQ,Orange3==$BUILD_COMMIT,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
           fi
           ../scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=${PYTHON_VERSION} "$APP"
+
+      - name: Apply arm64 specific patches
+        env:
+          APP: ${{ matrix.app }}
+        if: matrix.arch == 'arm64'
+        run: |
+          patch -p1 -d "$APP" < ./scripts/macos/arm64.patch
 
       - name: Build dmg installer
         shell: bash
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
+          ARCH: ${{ matrix.arch }}
+          APP: ${{ matrix.app }}
         run: |
           set -e
           mkdir dist
           ./scripts/macos/create-dmg-installer.sh --app "$APP" dist/Quasar.dmg
           VERSION=$("$APP/Contents/MacOS/pip" show quasar | grep -E '^Version: ' | cut -d ' ' -f 2)
-          mv dist/Quasar.dmg dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
-          shasum -a 256 dist/Quasar-$VERSION-Python${PYTHON_VERSION}.dmg
+          mv dist/Quasar.dmg dist/Quasar-$VERSION-Python${PYTHON_VERSION}-${ARCH}.dmg
+          shasum -a 256 dist/Quasar-$VERSION-Python${PYTHON_VERSION}-${ARCH}.dmg
 
       - name: Upload dmg
         uses: actions/upload-artifact@v4
         with:
-          name: orange-dmg-installer
+          name: orange-dmg-installer-${{ matrix.arch }}
           path: dist/Quasar-*.dmg
           if-no-files-found: error
 
   test:
     name: Test
     needs: build
-    runs-on: macos-latest
+    strategy:
+      fail-fast: False
+      matrix:
+        # Repeat of above build step runner definitions
+        include:
+          - os: macos-latest
+            arch: x86_64
+          - os: macos-14
+            arch: arm64
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Download dmg
         uses: actions/download-artifact@v4
         with:
-          name: orange-dmg-installer
+          name: orange-dmg-installer-${{ matrix.arch }}
       - name: Mount
         shell: bash
         run: |
@@ -150,7 +178,7 @@ jobs:
           hdiutil attach Quasar*.dmg -noverify -noautoopen -mountpoint ./mnt
       - name: Run tests
         run: |
-          APP=( mnt/Quasar.app )
+          APP=( mnt/Quasar*.app )
           $APP/Contents/MacOS/python --version
           $APP/Contents/MacOS/pip --version
           $APP/Contents/MacOS/pip freeze
