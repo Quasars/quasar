@@ -119,6 +119,7 @@ fi
 
 # Disable user site packages
 export PYTHONNOUSERSITE=1
+export PYTHONSAFEPATH=1
 
 exec "${DIR}"/PythonApp -m quasar "$@"
 EOF
