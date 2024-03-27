@@ -27,7 +27,7 @@ pyqtgraph~=0.13.1
 xlrd~=2.0
 xlsxwriter
 serverfiles
-opentsne~=0.7.1
+opentsne~=1.0.0
 python-louvain>=0.13
 pandas~=1.5.0
 xgboost
