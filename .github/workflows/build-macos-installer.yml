@@ -35,7 +35,7 @@ jobs:
         include:
           - os: macos-11
             arch: x86_64
-            python-version: "3.11.8"
+            python-version: "3.10.11"
             req: ../specs/macos/requirements.txt
             app: "/Applications/Quasar.app"
           - os: macos-14
