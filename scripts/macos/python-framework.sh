@@ -239,8 +239,8 @@ python-framework-relocate() {
     sed -i.bck s@"${anchor}/Python.framework"@"${fmkdir}"@ \
         "${libdir}"/python${ver_short}/config-${ver_short}?-darwin/Makefile
 
-    sed -i.bck s@"${anchor}/Python.framework"@"${fmkdir}"@ \
-        "${libdir}"/python${ver_short}/_sysconfigdata_*.py
+    patch-sysconfig-data "${libdir}"/python${ver_short}/_sysconfigdata_*.py \
+                         "${anchor}"/Python.framework/Versions/${ver_short}
 
     # 3.6.* has bundled libssl with a hardcoded absolute openssl_{cafile,capath}
     # (need to set SSL_CERT_FILE environment var in all scripts?
@@ -249,6 +249,18 @@ python-framework-relocate() {
         patch-ssl "${prefix}"
     fi
 }
+
+# patch the _sysconfig_data_*.py file to make it prefix invariant.
+patch-sysconfig-data() {
+    local file=${1:?}
+    local anchor=${2:?}
+    local contents=$(cat "${file}")
+    echo "import sys, os" > "${file}"
+    echo "__prefix=os.path.normpath(sys.base_prefix)" >> "${file}"
+    cat <<< "${contents}" >> "${file}"
+    sed -i.bck s@"\'${anchor}"@"f\'{__prefix}"@ "${file}"
+}
+
 
 
 # patch python 3.6 to add etc/openssl/cert.pem cert store located relative
