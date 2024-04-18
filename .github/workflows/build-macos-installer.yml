@@ -26,8 +26,8 @@ jobs:
       PIP_PREFER_BINARY: 1
 
       # Quasar
-      QUASAR_VERSION: "1.9.1"
-      SPECTROSCOPY_VERSION: "0.6.12"
+      QUASAR_VERSION: "1.9.2"
+      SPECTROSCOPY_VERSION: "0.6.13"
 
     strategy:
       fail-fast: False

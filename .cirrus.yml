@@ -16,8 +16,8 @@ macos_arm64_dmg_task:
     SKIP_JENKINS: "1"
 
     # Quasar
-    QUASAR_VERSION: "1.9.1"
-    SPECTROSCOPY_VERSION: "0.6.12"
+    QUASAR_VERSION: "1.9.2"
+    SPECTROSCOPY_VERSION: "0.6.13"
 
   prerequisites_script:
     - brew install python@3.10
