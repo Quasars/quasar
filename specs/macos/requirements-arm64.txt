@@ -34,3 +34,4 @@ catboost
 
 h5py
 opusFC>=1.3.0
+lmfit~=1.2.2

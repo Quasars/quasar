@@ -35,6 +35,7 @@ catboost~=1.1.1  # catboost 1.2 wheels do not support macos <11
 
 h5py
 opusFC>=1.3.0
+lmfit~=1.2.2
 
 # use the same webengine as Orange 3.36.2 release (newer .12 does not work on a Big sur Mac)
 PyQtWebEngine-Qt5==5.15.2
