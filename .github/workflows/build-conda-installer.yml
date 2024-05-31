@@ -16,7 +16,7 @@ jobs:
     env:
       REPO: https://github.com/biolab/orange3.git
       BUILD_BRANCH: master
-      BUILD_COMMIT: "3.36.2"
+      BUILD_COMMIT: "3.37.0"
       BUILD_LOCAL: ""
 
       PYTHONFAULTHANDLER: 1
