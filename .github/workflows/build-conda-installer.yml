@@ -100,7 +100,9 @@ jobs:
                          orange-spectroscopy=$SPECTROSCOPY_VERSION \
                          opusFC=1.3.0 \
                          h5py \
-                         lmfit=1.2.2
+                         lmfit=1.2.2 \
+                         openpyxl=3.1.2 \
+                         blas=*=openblas
             conda list -p ./env --export --explicit --md5 > env-spec.txt
             cat env-spec.txt
             echo "CONDA_SPEC_FILE=env-spec.txt" >> $GITHUB_ENV
