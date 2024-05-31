@@ -86,9 +86,9 @@ jobs:
             micromamba create -p ./env --yes \
                          ${EXTRA_ARGS[*]} \
                          python=$PYTHON_VERSION \
-                         numpy=1.24.* \
-                         scipy=1.10.* \
-                         scikit-learn=1.3.* \
+                         numpy=1.25.* \
+                         scipy=1.13.* \
+                         scikit-learn=1.4.* \
                          pandas=1.5.* \
                          pyqtgraph=0.13.* \
                          bottleneck=1.3.* \
