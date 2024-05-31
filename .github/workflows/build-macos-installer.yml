@@ -18,7 +18,6 @@ jobs:
       BUILD_BRANCH: master
       BUILD_COMMIT: "3.36.2"
       BUILD_LOCAL: ""
-
       PYTHONFAULTHANDLER: 1
       PIP_DISABLE_PIP_VERSION_CHECK: 1
       PIP_CACHE_DIR: .pip-cache
