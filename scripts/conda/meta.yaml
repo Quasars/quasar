@@ -22,8 +22,8 @@ requirements:
     - recommonmark
   run:
     - python
-    - orange3>=3.36.2
-    - orange-spectroscopy>=0.6.13
+    - orange3>=3.37.0
+    - orange-spectroscopy>=0.6.14
 
 test:
   imports:
