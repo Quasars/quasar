@@ -1,6 +1,6 @@
 import pkg_resources
-from PyQt5.QtCore import QCoreApplication, QPoint, Qt, QRect
-from PyQt5.QtGui import QPixmap, QFont, QFontMetrics, QPainter, QColor
+from AnyQt.QtCore import QCoreApplication, QPoint, Qt, QRect
+from AnyQt.QtGui import QPixmap, QFont, QFontMetrics, QPainter, QColor
 
 
 def splash_screen():
