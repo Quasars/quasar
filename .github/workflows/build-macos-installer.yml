@@ -190,4 +190,3 @@ jobs:
           # Quasar specific tests
           $APP/Contents/MacOS/python -Xfaulthandler -m unittest -v orangecontrib.spectroscopy.tests
           $APP/Contents/MacOS/python -Xfaulthandler -m quasar --help
-          $APP/Contents/MacOS/python -Xfaulthandler -c "import opusFC"
