@@ -573,13 +573,13 @@ Section -Launchers
     # Startup shortcut
     CreateShortCut \
         "$InstDir\${LAUNCHER_SHORTCUT_NAME}.lnk" \
-        "$PythonExecPrefix\pythonw.exe" "-Psm ${LAUNCHERMODULE}" \
+        "$PythonExecPrefix\pythonw.exe" "-sm ${LAUNCHERMODULE}" \
         "$PythonPrefix\share\${ICONDIR}\${APPICON}" 0
     # Utility shortcut to launch the application with max log level attached
     # to the console that remains visible after exit
     CreateShortCut \
         "$InstDir\${LAUNCHER_SHORTCUT_NAME} Debug.lnk" \
-        "%COMSPEC%" '/K "$PythonExecPrefix\python.exe" -Psm ${LAUNCHERMODULE} -l4' \
+        "%COMSPEC%" '/K "$PythonExecPrefix\python.exe" -sm ${LAUNCHERMODULE} -l4' \
         "$PythonPrefix\share\${ICONDIR}\${APPICON}" 0
     # A utility shortcut for activating the environment
     CreateShortCut \
@@ -608,7 +608,7 @@ Section "Start Menu Shortcuts" SectionStartMenu
         CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
         CreateShortCut \
             "$SMPROGRAMS\$StartMenuFolder\${LAUNCHER_SHORTCUT_NAME}.lnk" \
-            "$PythonExecPrefix\pythonw.exe" "-Psm ${LAUNCHERMODULE}" \
+            "$PythonExecPrefix\pythonw.exe" "-sm ${LAUNCHERMODULE}" \
             "$PythonPrefix\share\${ICONDIR}\${APPICON}" 0
 
         # A utility shortcut for activating the environment
@@ -632,7 +632,7 @@ Section "Desktop Shortcuts" SectionDesktop
     DetailPrint "Installing Desktop shortcut"
     CreateShortCut \
         "$DESKTOP\${LAUNCHER_SHORTCUT_NAME}.lnk" \
-        "$PythonExecPrefix\pythonw.exe" "-Psm ${LAUNCHERMODULE}" \
+        "$PythonExecPrefix\pythonw.exe" "-sm ${LAUNCHERMODULE}" \
         "$PythonPrefix\share\${ICONDIR}\${APPICON}" 0
 SectionEnd
 SectionGroupEnd
@@ -684,7 +684,7 @@ Section -Register SectionRegister
         "$PythonPrefix\share\${ICONDIR}\OrangeOWS.ico"
     WriteRegStr SHELL_CONTEXT \
         "Software\Classes\${INSTALL_REGISTRY_KEY}\Shell\Open\Command\" "" \
-        '"$PythonExecPrefix\pythonw.exe" -Psm ${LAUNCHERMODULE} "%1"'
+        '"$PythonExecPrefix\pythonw.exe" -sm ${LAUNCHERMODULE} "%1"'
 
     WriteUninstaller "$InstDir\${UNINSTALL_EXEFILE}"
 
@@ -755,7 +755,7 @@ Function un.Register
 FunctionEnd
 
 Function LaunchApplication
-    ExecShell "open" "$PythonExecPrefix\pythonw.exe" "-Psm ${LAUNCHERMODULE}"
+    ExecShell "open" "$PythonExecPrefix\pythonw.exe" "-sm ${LAUNCHERMODULE}"
 FunctionEnd
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
