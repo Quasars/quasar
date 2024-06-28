@@ -1,13 +1,7 @@
 name : Build Windows Portable Installer
 
 on:
-  pull_request:
   workflow_dispatch:
-  push:
-      branches:
-        - 'master'
-        - 'releases/**'
-        - 'testing/**'
 
 jobs:
   build:
