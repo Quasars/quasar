@@ -35,7 +35,7 @@ jobs:
       matrix:
         include:
           - python-version: "3.11.8"
-            miniconda-version: "py311_24.1.2-0"
+            miniforge-version: "24.7.1-0"
 
     defaults:
       run:
@@ -111,7 +111,7 @@ jobs:
       - name: Build installer
         env:
           PLATTAG: win_amd64
-          MINICONDA_VERSION: ${{ matrix.miniconda-version }}
+          MINIFORGE_VERSION: ${{ matrix.miniforge-version }}
         run: |
           mkdir dist
           export PATH="$(cygpath -u 'C:\Program Files (x86)\NSIS'):$PATH"
@@ -120,7 +120,7 @@ jobs:
               --platform $PLATTAG \
               --cache-dir .cache \
               --dist-dir dist \
-              --miniconda-version "$MINICONDA_VERSION" \
+              --miniforge-version "$MINIFORGE_VERSION" \
               --env-spec "$CONDA_SPEC_FILE" \
               --online no
 

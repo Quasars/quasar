@@ -206,7 +206,7 @@ FunctionEnd
             ReadRegStr $2 ${ROOT_KEY} \
                             "${__REG_PREFIX}\$1" "DisplayName"
             ${If} $2 != ""
-                ${StrStr} $3 $2 "Miniconda3"
+                ${StrStr} $3 $2 "Miniforge3"
                 ${StrStr} $4 $2 "Anaconda3"
                 ${LogWrite} "   $3  $4"
                 ${If} $3 != ""

@@ -17,15 +17,15 @@ Options:
     -d --dist-dir <path>    Distribution dir (default ./dist)
     --cache-dir <path>      Cache downloaded packages in DIR (the default
                             is \"build/download-cache\")
-    -M, --miniconda-version <version>
-                            The miniconda distribution to include in the
-                            installer (default ${MINICONDA_VERSION_DEFAULT}).
+    -M, --miniforge-version <version>
+                            The miniforge distribution to include in the
+                            installer (default ${MINIFORGE_VERSION_DEFAULT}).
     --platform <plattag>    win32 or win_amd64
     --env-spec              An environment specification file as exported by
                             \`conda list --export --explicit --md5\`
                             (the default is specs/conda-spec.txt)
     --online (yes|no)       Build an \"online\" or \"offline\" installer.
-                            In an online installer only the Miniconda installer
+                            In an online installer only the Miniforge installer
                             is included. All other packages are otherwise
                             fetched at installation time
                             (offline is currently not recommended).
@@ -46,10 +46,10 @@ BUILDBASE=
 DISTDIR=
 CACHEDIR=
 
-# Miniconda installer version; included and installed if there is no existing
-# Anaconda/Miniconda installation found on the target system.
-MINICONDA_VERSION_DEFAULT=4.7.12
-MINICONDA_VERSION=${MINICONDA_VERSION_DEFAULT}
+# Miniforge installer version; included and installed if there is no existing
+# Anaconda/Miniforge installation found on the target system.
+MINIFORGE_VERSION_DEFAULT=4.7.12
+MINIFORGE_VERSION=${MINIFORGE_VERSION_DEFAULT}
 
 PLATTAG=win_amd64
 
@@ -74,10 +74,10 @@ while [[ "${1:0:1}" = "-" ]]; do
             CACHEDIR=${2:?}; shift 2;;
         --cache-dir=*)
             CACHEDIR=${1#*=}; shift 1;;
-        -M|--miniconda-version)
-            MINICONDA_VERSION=${2:?}; shift 2;;
-        --miniconda-version=*)
-            MINICONDA_VERSION=${1*=}; shift 1;;
+        -M|--miniforge-version)
+            MINIFORGE_VERSION=${2:?}; shift 2;;
+        --miniforge-version=*)
+            MINIFORGE_VERSION=${1#*=}; shift 1;;
         --platform)
             PLATTAG=${2:?}; shift 2;;
         --platform=*)
@@ -156,18 +156,18 @@ version-component() {
     echo "${vercomp[comindex]}"
 }
 
-fetch-miniconda() {
+fetch-miniforge() {
     local version="${1:?}"
     local platform="${2:?}"
     local destdir="${3:?}"
-    local url="https://repo.continuum.io/miniconda"
+    local url="https://github.com/conda-forge/miniforge/releases/download/${version}"
     local filename=
     case "${platform}" in
         win32)
-            filename=Miniconda3-"${version}"-Windows-x86.exe
+            filename=Miniforge3-"${version}"-Windows-x86.exe
             ;;
         win_amd64)
-            filename=Miniconda3-"${version}"-Windows-x86_64.exe
+            filename=Miniforge3-"${version}"-Windows-x86_64.exe
             ;;
         *)
             echo "Wrong platform" >&2; return 1;;
@@ -309,9 +309,9 @@ make-installer() {
     local scriptdir="$(dirname "$0")"
     local nsis_script="${scriptdir:?}/orange-conda.nsi"
     local outpath=${DISTDIR:?}
-    local filename=${NAME:?}-${VERSION:?}-Miniconda-${CONDAPLATTAG}.exe
-    local pyinstaller=Miniconda3-${MINICONDA_VERSION:?}-Windows-${CONDAPLATTAG}.exe
-    local extransisparams=( -DMINICONDA_VERSION=${MINICONDA_VERSION:?} )
+    local filename=${NAME:?}-${VERSION:?}-Miniforge-${CONDAPLATTAG}.exe
+    local pyinstaller=Miniforge3-${MINIFORGE_VERSION:?}-Windows-${CONDAPLATTAG}.exe
+    local extransisparams=( -DMINIFORGE_VERSION=${MINIFORGE_VERSION:?} )
     if [[ "${ONLINE}" == yes ]]; then
         extransisparams+=( -DONLINE )
     else
@@ -358,7 +358,7 @@ EOF
              "${nsis_script:?}"
 }
 
-fetch-miniconda ${MINICONDA_VERSION} ${PLATTAG} "${CACHEDIR:?}"/miniconda
+fetch-miniforge ${MINIFORGE_VERSION} ${PLATTAG} "${CACHEDIR:?}"/miniforge
 
 if [[ "${ONLINE}" == yes ]]; then
     cat > "${BASEDIR}"/conda-spec.txt < "${ENV_SPEC_FILE}"
@@ -388,7 +388,7 @@ if [[ ! "${PYTHON_VERSION}" ]]; then
     exit 1;
 fi
 
-cp "${CACHEDIR:?}/miniconda/Miniconda3-${MINICONDA_VERSION}-Windows-${CONDAPLATTAG}.exe" \
+cp "${CACHEDIR:?}/miniforge/Miniforge3-${MINIFORGE_VERSION}-Windows-${CONDAPLATTAG}.exe" \
    "${BASEDIR:?}/"
 
 mkdir -p "${BASEDIR:?}/icons"

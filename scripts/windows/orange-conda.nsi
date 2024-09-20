@@ -8,8 +8,8 @@
 #  - PY{MAJOR,MINOR,MICRO} Python version to be installed in the new env
 #  - APPNAME Application (short) name
 #  - VER{MAJOR,MINOR,MICRO} Application version
-#  - PYINSTALLER basename of the Miniconda python installer
-#  - INSTALL_REGISTRY_KEY reg subkey name to use for storing install infomation
+#  - PYINSTALLER basename of the Miniforge python installer
+#  - INSTALL_REGISTRY_KEY reg subkey name to use for storing install information
 #       (details will be stored under Software/${INSTALL_REGISTRY_KEY})
 
 
@@ -383,46 +383,46 @@ Function RestoreSilentInstallDir
 FunctionEnd
 
 
-# Section Miniconda
+# Section Miniforge
 # -----------------
-# A Miniconda Python distributions
-Section "Miniconda ${MINICONDA_VERSION}" \
-        SectionMiniconda
+# A Miniforge Python distributions
+Section "Miniforge ${MINIFORGE_VERSION}" \
+        SectionMiniforge
     ${GetAnyAnacondaInstall} $BasePythonPrefix $PythonInstallMode
     ${If} $BasePythonPrefix != ""
         ${LogWrite} "Using exising (Ana|Mini)conda installed in \
                      $BasePythonPrefix"
     ${Else}
         ${ExtractTemp} "${BASEDIR}\${PYINSTALLER}" "${TEMPDIR}"
-        DetailPrint "Installing Miniconda ${MINICONDA_VERSION}"
+        DetailPrint "Installing Miniforge ${MINIFORGE_VERSION}"
         # Why does executing "${TEMPDIR}\${PYINSTALLER}" directly hang the
-        # Miniconda installer?
+        # Miniforge installer?
         ${If} ${Silent}
             StrCpy $0 "/S /AddToPath=0 /RegisterPython=0"
         ${Else}
             StrCpy $0 ""
         ${EndIf}
         MessageBox MB_OKCANCEL \
-            '${APPLICATIONNAME} requires a Miniconda Python distribution \
+            '${APPLICATIONNAME} requires a Miniforge Python distribution \
             installed on the system. This will be done by running a separate \
             installer program.$\r$\n$\r$\n\
             Click Ok to continue.' \
-            /SD IDOK IDOK continue_miniconda_ IDCANCEL abort_miniconda_
-        abort_miniconda_:
-            Abort "Aborting Miniconda installation (user cancelled)."
-        continue_miniconda_:
-            ${LogWrite} "Running miniconda installer"
+            /SD IDOK IDOK continue_miniforge_ IDCANCEL abort_miniforge_
+        abort_miniforge_:
+            Abort "Aborting Miniforge installation (user cancelled)."
+        continue_miniforge_:
+            ${LogWrite} "Running miniforge installer"
         ${ExecToLog} 'cmd.exe /C "${TEMPDIR}\${PYINSTALLER}" \
                 $0 /InstallationType=$MultiUser.InstallMode \
             '
         Pop $0
         ${If} $0 != 0
-            Abort "Miniconda installation failed (error value: $0)"
+            Abort "Miniforge installation failed (error value: $0)"
         ${EndIf}
         ${GetAnyAnacondaInstall} $BasePythonPrefix $PythonInstallMode
         ${If} $BasePythonPrefix == ""
             Abort "No anaconda distribution found. Cannot proceed.$\r$\n \
-                   Make sure Miniconda was installed successfully."
+                   Make sure Miniforge was installed successfully."
         ${EndIF}
         ${IfNot} ${FileExists} "$BasePythonPrefix\python.exe"
             Abort "No python.exe found in $BasePythonPrefix$\r$\n \
@@ -432,12 +432,12 @@ Section "Miniconda ${MINICONDA_VERSION}" \
     ${LogWrite} "Using conda installation: $BasePythonPrefix"
 SectionEnd
 
-Function un.Miniconda
+Function un.Miniforge
     # Nothing to do. Anaconda installation has its own uninstall.
 FunctionEnd
 
 
-Section "-Miniconda env setup" SectionEnvSetup
+Section "-Miniforge env setup" SectionEnvSetup
     # Setup the PythonPrefix/PythonExecPrefix... variables
     # but does not actualy create any env (this is done in single step
     # in InstallPackages section
@@ -760,8 +760,8 @@ FunctionEnd
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 
-!insertmacro MUI_DESCRIPTION_TEXT ${SectionMiniconda} \
-    "Install Miniconda ${MINICONDA_VERSION} (${BITS} bit)"
+!insertmacro MUI_DESCRIPTION_TEXT ${SectionMiniforge} \
+    "Install Miniforge ${MINIFORGE_VERSION} (${BITS} bit)"
 
 !insertmacro MUI_DESCRIPTION_TEXT ${InstallPackages} \
     "Install required packages into the destination environment"
@@ -790,7 +790,7 @@ Section Uninstall
     Call un.Launchers
     Call un.InstallPackages
     Call un.Environment
-    Call un.Miniconda
+    Call un.Miniforge
 
     ${If} ${FileExists} "$InstDir\${UNINSTALL_EXEFILE}"
         Delete "$InstDir\${UNINSTALL_EXEFILE}"
@@ -823,14 +823,14 @@ Function .onInit
         # Found an appropriate python installation and can reuse it
         # Change the SectionPython to Unselected
         # (change text to Install (use) Private Python?)
-        SectionGetText ${SectionMiniconda} $0
-        SectionSetText ${SectionMiniconda} \
+        SectionGetText ${SectionMiniforge} $0
+        SectionSetText ${SectionMiniforge} \
             "Anaconda python distribution (already installed)"
-        !insertmacro UnselectSection ${SectionMiniconda}
-        !insertmacro SetSectionFlag ${SectionMiniconda} ${SF_RO}
+        !insertmacro UnselectSection ${SectionMiniforge}
+        !insertmacro SetSectionFlag ${SectionMiniforge} ${SF_RO}
     ${Else}
-        !insertmacro SelectSection ${SectionMiniconda}
-        !insertmacro SetSectionFlag ${SectionMiniconda} ${SF_RO}
+        !insertmacro SelectSection ${SectionMiniforge}
+        !insertmacro SetSectionFlag ${SectionMiniforge} ${SF_RO}
     ${EndIf}
 FunctionEnd
 
