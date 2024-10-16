@@ -34,7 +34,6 @@ echo Appending the Quasar and conda-forge channels
 echo channels:         > "%PREFIX%\.condarc"
 echo   - https://quasar.codes/conda/  >> "%PREFIX%\.condarc"
 echo   - conda-forge  >> "%PREFIX%\.condarc"
-echo   - defaults     >> "%PREFIX%\.condarc"
 
 rem Path to base conda env
 for /f %%f in ( '"%CONDA%" info --root' ) do (
