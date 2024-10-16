@@ -101,6 +101,7 @@ jobs:
                          h5py \
                          lmfit=1.2.2 \
                          openpyxl=3.1.2 \
+                         pytz=2024.1 \
                          blas=*=openblas
             conda list -p ./env --export --explicit --md5 > env-spec.txt
             cat env-spec.txt
