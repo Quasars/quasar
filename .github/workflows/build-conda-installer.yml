@@ -99,7 +99,6 @@ jobs:
                          orange-spectroscopy=$SPECTROSCOPY_VERSION \
                          opusFC=1.4.0 \
                          h5py \
-                         lmfit=1.2.2 \
                          openpyxl=3.1.2 \
                          pytz=2024.1 \
                          blas=*=openblas
