@@ -72,9 +72,9 @@ jobs:
       - name: 'Install modified create-dmg (modified to allow longer detach timeouts)'
         shell: bash
         run: |
-          wget https://github.com/create-dmg/create-dmg/archive/refs/tags/v1.2.1.tar.gz
-          tar -zxvf v1.2.1.tar.gz
-          cd create-dmg-1.2.1/
+          wget https://github.com/create-dmg/create-dmg/archive/refs/tags/v1.2.2.tar.gz
+          tar -zxvf v1.2.2.tar.gz
+          cd create-dmg-1.2.2/
           patch --ignore-whitespace create-dmg <<'EOF'
           --- a/create-dmg        2023-11-13 15:11:49.411364880 +0100
           +++ b/create-dmg        2023-11-13 15:20:02.373043672 +0100
