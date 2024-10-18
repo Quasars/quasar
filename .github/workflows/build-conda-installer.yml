@@ -86,7 +86,7 @@ jobs:
             micromamba create -p ./env --yes \
                          ${EXTRA_ARGS[*]} \
                          python=$PYTHON_VERSION \
-                         numpy=1.25.* \
+                         numpy=1.26.* \
                          scipy=1.13.* \
                          scikit-learn=1.5.2 \
                          pandas=1.5.* \
