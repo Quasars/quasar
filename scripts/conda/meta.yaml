@@ -23,7 +23,8 @@ requirements:
   run:
     - python
     - orange3>=3.37.0
-    - orange-spectroscopy>=0.6.14
+    - orange-spectroscopy>=0.7.2
+    - orange-snom>=0.0.4
 
 test:
   imports:
@@ -32,6 +33,7 @@ test:
     - python -m quasar --help
     - python -m unittest -v Orange.tests Orange.widgets.tests
     - python -m unittest -v orangecontrib.spectroscopy.tests
+    - python -m unittest -v orangecontrib.snom.tests orangecontrib.snom.widgets.tests
 
 about:
   home: https://quasar.codes/

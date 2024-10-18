@@ -25,8 +25,9 @@ jobs:
       PIP_NO_WARN_SCRIPT_LOCATION: 1
 
       # Quasar
-      QUASAR_VERSION: "1.10.1"
-      SPECTROSCOPY_VERSION: "0.6.14"
+      QUASAR_VERSION: "1.10.2"
+      SPECTROSCOPY_VERSION: "0.7.2"
+      SNOM_VERSION: "0.0.4"
 
     strategy:
       fail-fast: False
@@ -119,9 +120,9 @@ jobs:
           set -e
           cd orange3
           if [[ $BUILD_LOCAL ]]; then
-              PIP_ARGS=( --pip-arg={-r,$REQ,./,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
+              PIP_ARGS=( --pip-arg={-r,$REQ,./,orange-spectroscopy==$SPECTROSCOPY_VERSION,orange-snom==$SNOM_VERSION,quasar==$QUASAR_VERSION} );
           else
-              PIP_ARGS=( --pip-arg={-r,$REQ,Orange3==$BUILD_COMMIT,orange-spectroscopy==$SPECTROSCOPY_VERSION,quasar==$QUASAR_VERSION} );
+              PIP_ARGS=( --pip-arg={-r,$REQ,Orange3==$BUILD_COMMIT,orange-spectroscopy==$SPECTROSCOPY_VERSION,orange-snom==$SNOM_VERSION,quasar==$QUASAR_VERSION} );
           fi
           ../scripts/macos/build-macos-app.sh "${PIP_ARGS[@]}" --python-version=${PYTHON_VERSION} "$APP"
 
