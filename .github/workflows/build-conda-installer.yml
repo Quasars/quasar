@@ -16,7 +16,7 @@ jobs:
     env:
       REPO: https://github.com/biolab/orange3.git
       BUILD_BRANCH: master
-      BUILD_COMMIT: "3.37.0"
+      BUILD_COMMIT: "3.38.1"
       BUILD_LOCAL: ""
 
       PYTHONFAULTHANDLER: 1
@@ -27,8 +27,8 @@ jobs:
       # CONDA_SPEC_FILE: ..\specs\win\conda-spec.txt
 
       # Quasar
-      QUASAR_VERSION: "1.10.2"
-      SPECTROSCOPY_VERSION: "0.7.2"
+      QUASAR_VERSION: "1.11.0"
+      SPECTROSCOPY_VERSION: "0.8.0"
       SNOM_VERSION: "0.0.4"
 
     strategy:
