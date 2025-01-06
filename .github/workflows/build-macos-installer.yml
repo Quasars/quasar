@@ -25,8 +25,8 @@ jobs:
       PIP_NO_WARN_SCRIPT_LOCATION: 1
 
       # Quasar
-      QUASAR_VERSION: "1.11.0"
-      SPECTROSCOPY_VERSION: "0.8.0"
+      QUASAR_VERSION: "1.11.1"
+      SPECTROSCOPY_VERSION: "0.8.1"
       SNOM_VERSION: "0.0.4"
 
     strategy:
