@@ -17,15 +17,15 @@ Options:
     -d --dist-dir <path>    Distribution dir (default ./dist)
     --cache-dir <path>      Cache downloaded packages in DIR (the default
                             is \"build/download-cache\")
-    -M, --miniforge-version <version>
-                            The miniforge distribution to include in the
-                            installer (default ${MINIFORGE_VERSION_DEFAULT}).
+    -M, --micromamba-version <version>
+                            The micromamba distribution to include in the
+                            installer (default ${MICROMAMBA_VERSION_DEFAULT}).
     --platform <plattag>    win32 or win_amd64
     --env-spec              An environment specification file as exported by
                             \`conda list --export --explicit --md5\`
                             (the default is specs/conda-spec.txt)
     --online (yes|no)       Build an \"online\" or \"offline\" installer.
-                            In an online installer only the Miniforge installer
+                            In an online installer only the micromamba binary
                             is included. All other packages are otherwise
                             fetched at installation time
                             (offline is currently not recommended).
@@ -46,10 +46,9 @@ BUILDBASE=
 DISTDIR=
 CACHEDIR=
 
-# Miniforge installer version; included and installed if there is no existing
-# Anaconda/Miniforge installation found on the target system.
-MINIFORGE_VERSION_DEFAULT=4.7.12
-MINIFORGE_VERSION=${MINIFORGE_VERSION_DEFAULT}
+# Included Micromamba version;
+MICROMAMBA_VERSION_DEFAULT=1.5.1-0
+MICROMAMBA_VERSION=${MICROMAMBA_VERSION_DEFAULT}
 
 PLATTAG=win_amd64
 
@@ -74,10 +73,10 @@ while [[ "${1:0:1}" = "-" ]]; do
             CACHEDIR=${2:?}; shift 2;;
         --cache-dir=*)
             CACHEDIR=${1#*=}; shift 1;;
-        -M|--miniforge-version)
-            MINIFORGE_VERSION=${2:?}; shift 2;;
-        --miniforge-version=*)
-            MINIFORGE_VERSION=${1#*=}; shift 1;;
+        -M|--micromamba-version)
+            MICROMAMBA_VERSION=${2:?}; shift 2;;
+        --micromamba-version=*)
+            MICROMAMBA_VERSION=${1#*=}; shift 1;;
         --platform)
             PLATTAG=${2:?}; shift 2;;
         --platform=*)
@@ -156,27 +155,16 @@ version-component() {
     echo "${vercomp[comindex]}"
 }
 
-fetch-miniforge() {
+fetch-micromamba() {
     local version="${1:?}"
-    local platform="${2:?}"
-    local destdir="${3:?}"
-    local url="https://github.com/conda-forge/miniforge/releases/download/${version}"
-    local filename=
-    case "${platform}" in
-        win32)
-            filename=Miniforge3-"${version}"-Windows-x86.exe
-            ;;
-        win_amd64)
-            filename=Miniforge3-"${version}"-Windows-x86_64.exe
-            ;;
-        *)
-            echo "Wrong platform" >&2; return 1;;
-    esac
+    local destdir="${2:?}"
+    local url="https://github.com/mamba-org/micromamba-releases/releases/download/${version}/micromamba-win-64"
+    local filename="micromamba-${version}-win-64"
     mkdir -p "${destdir:?}"
     local dest="${destdir}/${filename}"
     if [[ ! -f "${dest}" ]]; then
         local tmpname=$(mktemp "${dest}.XXXXX")
-        if curl -fSL -o "${tmpname}" "${url}/${filename}"; then
+        if curl -fSL -o "${tmpname}" "${url}"; then
             mv "${tmpname}" "${dest}"
         else
             return $?
@@ -309,13 +297,13 @@ make-installer() {
     local scriptdir="$(dirname "$0")"
     local nsis_script="${scriptdir:?}/orange-conda.nsi"
     local outpath=${DISTDIR:?}
-    local filename=${NAME:?}-${VERSION:?}-Miniforge-${CONDAPLATTAG}.exe
-    local pyinstaller=Miniforge3-${MINIFORGE_VERSION:?}-Windows-${CONDAPLATTAG}.exe
-    local extransisparams=( -DMINIFORGE_VERSION=${MINIFORGE_VERSION:?} )
+    local filename=${NAME:?}-${VERSION:?}-${CONDAPLATTAG}.exe
+    local micromamba=micromamba.exe
+    local extransisparams=()
     if [[ "${ONLINE}" == yes ]]; then
         extransisparams+=( -DONLINE )
     else
-        cp "${scriptdir}/condainstall.bat" "${BASEDIR:?}"/conda-pkgs/install.bat
+        cp "${scriptdir}/micromambainstall.bat" "${BASEDIR:?}"/install.bat
     fi
     local basedir=$(win-path "${BASEDIR:?}")
     local versionstr=${VERSION:?}
@@ -345,7 +333,6 @@ EOF
              -DPYMAJOR=${pymajor} -DPYMINOR=${pyminor} -DPYMICRO=${pymicro} \
              -DPYARCH=${PLATTAG} \
              -DBASEDIR="${basedir}" \
-             -DPYINSTALLER=${pyinstaller} \
              -DINSTALL_REGISTRY_KEY=Quasar \
              -DINSTALLERICON="$(win-path "${scriptdir}")/quasar.ico" \
              -DICONDIR="quasar\icons" \
@@ -358,7 +345,7 @@ EOF
              "${nsis_script:?}"
 }
 
-fetch-miniforge ${MINIFORGE_VERSION} ${PLATTAG} "${CACHEDIR:?}"/miniforge
+fetch-micromamba ${MICROMAMBA_VERSION} "${CACHEDIR:?}"/micromamba
 
 if [[ "${ONLINE}" == yes ]]; then
     cat > "${BASEDIR}"/conda-spec.txt < "${ENV_SPEC_FILE}"
@@ -370,12 +357,13 @@ if [[ "${ONLINE}" == yes ]]; then
                      < "${BASEDIR:?}"/conda-spec.txt)
 else
     conda-fetch-packages "${BASEDIR:?}"/conda-pkgs "${ENV_SPEC_FILE}"
+    mv "${BASEDIR}/conda-pkgs/conda-spec.txt" "${BASEDIR}/"
     # extract the orange version from env spec
-    VERSION=$(cat < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt |
+    VERSION=$(cat < "${BASEDIR:?}"/conda-spec.txt |
               grep -E '(^|.+/)quasar-([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)' |
               sed -n 's@.*quasar-\([^-]*\)-.*$@\1@p')
     PYTHON_VERSION=$(conda-env-spec-python-version \
-                     < "${BASEDIR:?}"/conda-pkgs/conda-spec.txt)
+                     < "${BASEDIR:?}"/conda-spec.txt)
 fi
 
 if [[ ! "${VERSION}" ]]; then
@@ -388,10 +376,10 @@ if [[ ! "${PYTHON_VERSION}" ]]; then
     exit 1;
 fi
 
-cp "${CACHEDIR:?}/miniforge/Miniforge3-${MINIFORGE_VERSION}-Windows-${CONDAPLATTAG}.exe" \
-   "${BASEDIR:?}/"
+cp "${CACHEDIR:?}/micromamba/micromamba-${MICROMAMBA_VERSION}-win-64" \
+   "${BASEDIR:?}/micromamba.exe"
 
 mkdir -p "${BASEDIR:?}/icons"
 cp "$(dirname "$0")"/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
-cp "$(dirname "$0")"/sitecustomize.py "${BASEDIR:?}"/conda-pkgs
+cp "$(dirname "$0")"/sitecustomize.py "${BASEDIR:?}"/
 make-installer

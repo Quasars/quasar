@@ -36,7 +36,7 @@ jobs:
       matrix:
         include:
           - python-version: "3.11.8"
-            miniforge-version: "24.7.1-0"
+            micromamba-version: "1.5.1-0"
 
     defaults:
       run:
@@ -96,12 +96,12 @@ jobs:
                          pyqtwebengine=5.15.* \
                          Orange3=$VERSION \
                          blas=*=openblas \
+                         mamba \
                          quasar=$QUASAR_VERSION \
                          orange-spectroscopy=$SPECTROSCOPY_VERSION \
                          orange-snom=$SNOM_VERSION \
                          opusFC>=1.3.0 \
-                         h5py \
-                         blas=*=openblas
+                         h5py
             conda list -p ./env --export --explicit --md5 > env-spec.txt
             cat env-spec.txt
             echo "CONDA_SPEC_FILE=env-spec.txt" >> $GITHUB_ENV
@@ -110,7 +110,7 @@ jobs:
       - name: Build installer
         env:
           PLATTAG: win_amd64
-          MINIFORGE_VERSION: ${{ matrix.miniforge-version }}
+          MICROMAMBA_VERSION: ${{ matrix.micromamba-version }}
         run: |
           mkdir dist
           export PATH="$(cygpath -u 'C:\Program Files (x86)\NSIS'):$PATH"
@@ -119,7 +119,7 @@ jobs:
               --platform $PLATTAG \
               --cache-dir .cache \
               --dist-dir dist \
-              --miniforge-version "$MINIFORGE_VERSION" \
+              --micromamba-version "$MICROMAMBA_VERSION" \
               --env-spec "$CONDA_SPEC_FILE" \
               --online no
 
