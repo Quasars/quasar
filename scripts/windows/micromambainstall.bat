@@ -14,6 +14,8 @@ if not exist "%PREFIX%\conda-meta" (
 if not exist "%PREFIX%\pkgs" (
     mkdir "%PREFIX%\pkgs"
 )
+
+set CONDA_SAFETY_CHECKS=disabled
 call "%MICROMAMBA%" install --yes --root-prefix "%PREFIX%" --prefix "%PREFIX%" --file .\conda-spec.txt ^
         || exit /b !ERRORLEVEL!
 
