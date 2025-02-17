@@ -518,7 +518,7 @@ SectionEnd
 
 # Create utility shortcut launchers in the $InstDir
 Section -Launchers
-    SetOutPath "$InstDir"
+    SetOutPath "%HOMEDRIVE%\%HOMEPATH%"
     DetailPrint "Creating launcher shortcuts"
     # Startup shortcut
     CreateShortCut \
@@ -580,6 +580,7 @@ FunctionEnd
 
 Section "Desktop Shortcuts" SectionDesktop
     DetailPrint "Installing Desktop shortcut"
+    SetOutPath "%HOMEDRIVE%\%HOMEPATH%"
     CreateShortCut \
         "$DESKTOP\${LAUNCHER_SHORTCUT_NAME}.lnk" \
         "$PythonExecPrefix\pythonw.exe" "-Psm ${LAUNCHERMODULE}" \
