@@ -24,11 +24,12 @@ echo channels:         > "%PREFIX%\.condarc"
 echo   - conda-forge  >> "%PREFIX%\.condarc"
 echo   - defaults     >> "%PREFIX%\.condarc"
 
-rem Layout a backcompatible conda.bat file that dispatches to mamba,
+rem Layout a back-compatible conda.bat file that dispatches to micromamba,
 rem for add-on dialog logic.
 set "CONDA_BAT=%PREFIX%\Scripts\conda.bat"
 echo @echo off>                    "%CONDA_BAT%"
-echo call "%%~dp0\mamba.exe"  %%*>>          "%CONDA_BAT%"
+echo set "__PREFIX=%%~dp0\..">>     "%CONDA_BAT%"
+echo call "%%__PREFIX%%\micromamba" --root-prefix "%%__PREFIX%%" --prefix "%%__PREFIX%%" %%*>>          "%CONDA_BAT%"
 
 rem Initialize activate hook, ...
 "%MICROMAMBA%" --root-prefix "%PREFIX%" shell hook -s cmd.exe
