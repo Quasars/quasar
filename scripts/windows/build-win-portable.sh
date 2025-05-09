@@ -98,20 +98,20 @@ BUILDDIR_WIN="$(cygpath -w "${BUILDDIR}")"
 
 python -m pip install pywin32
 python "${DIR}/create_shortcut.py" \
-   --target 'cmd.exe' \
+   --target '%SystemRoot%\\system32\\cmd.exe' \
    --arguments '"/C start pythonw.exe -Psm Orange.canvas"' \
    --working-directory "" \
    --window-style Minimized \
    --shortcut "${BUILDDIR_WIN}\Orange.lnk"
 
 python "${DIR}/create_shortcut.py" \
-   --target 'cmd.exe' \
+   --target '%SystemRoot%\\system32\\cmd.exe' \
    --arguments '"/K python.exe -Psm Orange.canvas -l4"' \
    --working-directory "" \
    --shortcut "${BUILDDIR_WIN}/Orange Debug.lnk"
 
 python "${DIR}/create_shortcut.py" \
-   --target 'cmd.exe' \
+   --target '%SystemRoot%\\system32\\cmd.exe' \
    --arguments '"/C start Orange\pythonw.exe -Psm Orange.canvas"' \
    --working-directory "" \
    --window-style Minimized \
