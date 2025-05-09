@@ -101,6 +101,18 @@ jobs:
         shell: bash
         run: |
           7z x "-oD:\\test-install" Orange*.zip
+
+      - name: Read back shortcut
+        shell: pwsh
+        run: |
+          $WScriptShell = New-Object -ComObject WScript.Shell
+          $shortcut = $WScriptShell.CreateShortcut('D:\\test-install\\Orange\\Orange.lnk')
+          echo "Target:" $shortcut.TargetPath
+          echo "Arguments:" $shortcut.Arguments
+          $shortcut = $WScriptShell.CreateShortcut('D:\\test-install\\Orange\\Orange Debug.lnk')
+          echo "Target:" $shortcut.TargetPath
+          echo "Arguments:" $shortcut.Arguments
+
       - name: Run tests
         shell: bash
         run: |
