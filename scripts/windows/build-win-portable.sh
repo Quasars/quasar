@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# !/usr/bin/env bash
 
 NAME=Orange3
 
@@ -11,6 +11,8 @@ PIP_ARGS=()
 
 PYTHON_VERSION=${PYTHON_VERSION:-"3.10.11"}
 
+# Suppress MSYS2 auto unix -> win path expansion
+export MSYS2_ARG_CONV_EXCL="*"
 
 while [[ "${1:0:1}" = "-" ]]; do
     case $1 in

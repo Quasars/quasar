@@ -54,6 +54,8 @@ jobs:
 
       - name: Prepare wheels
         shell: bash
+        env:
+          MSYS2_ARG_CONV_EXCL: "*"
         run: |
           python -m pip install $BUILD_DEPS
           if [[ $BUILD_LOCAL ]]; then
@@ -68,6 +70,7 @@ jobs:
         shell: bash
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
+          MSYS2_ARG_CONV_EXCL: "*"
         run: |
           export PATH="$(cygpath -u C:\\msys64\\usr\\bin):$PATH"
           echo PATH=$PATH
