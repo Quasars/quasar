@@ -140,6 +140,8 @@ jobs:
     name: Test
     needs: build
     runs-on: windows-2019
+    env:
+      INSTALL_PATH: "D:\\install path"
     steps:
       - name: Download installer
         uses: actions/download-artifact@v4
@@ -153,14 +155,14 @@ jobs:
           rem # runs 'attached' to the console.
           for %%s in ( Quasar-*.exe ) do ( set "INSTALLER=%%s" )
           echo INSTALLER = %INSTALLER%
-          %INSTALLER% /S /D=D:\test-install > nul
+          %INSTALLER% /S /D=%INSTALL_PATH% > nul
       - name: Run tests
         shell: bash
         run: |
-          PYTHON=$(cygpath -u 'D:\test-install\python')
-          $PYTHON --version
-          $PYTHON -m pip --version
-          $PYTHON -m pip list --format=freeze
+          PYTHON=$(cygpath -u "$INSTALL_PATH"'\\python')
+          "$PYTHON" --version
+          "$PYTHON" -m pip --version
+          "$PYTHON" -m pip list --format=freeze
           # Test that orange and all dependencies are installed in a
           # consistent state
           #$PYTHON -m pip install --no-index --no-cache-dir orange3
@@ -169,7 +171,7 @@ jobs:
           export ORANGE_DEPRECATIONS_ERROR=1
           export PYTHONWARNINGS=module
 
-          $PYTHON -m unittest -v Orange.tests Orange.widgets.tests
+          "$PYTHON" -m unittest -v Orange.tests Orange.widgets.tests
 
           # Quasar specific tests
           $PYTHON -m unittest -v orangecontrib.spectroscopy.tests
@@ -180,7 +182,7 @@ jobs:
       - name: Test conda
         shell: cmd
         run: |
-          D:\test-install\Scripts\conda.bat --help
-          D:\test-install\Scripts\conda.bat info
-          D:\test-install\Scripts\activate.bat
+          "%INSTALL_PATH%"\Scripts\conda.bat --help
+          "%INSTALL_PATH%"\Scripts\conda.bat info
+          "%INSTALL_PATH%"\Scripts\activate.bat
           echo %CONDA_PREFIX%
