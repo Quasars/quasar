@@ -1,4 +1,5 @@
-import pkg_resources
+import importlib
+import importlib_metadata
 
 from AnyQt.QtCore import Qt
 from AnyQt.QtGui import QColor, QIcon
@@ -11,7 +12,7 @@ from quasar.launcher.update_check import check_for_updates
 
 
 def version():
-    return pkg_resources.get_distribution("Quasar").version
+    return importlib_metadata.distribution("quasar").version
 
 
 class QuasarConfig(config.Config):
@@ -31,8 +32,7 @@ class QuasarConfig(config.Config):
 
     @staticmethod
     def application_icon():
-        path = pkg_resources.resource_filename(
-            __name__, "icons/quasar.svg")
+        path = str(importlib.resources.files("quasar").joinpath("launcher/icons/quasar.svg"))
         return QIcon(path)
 
 
