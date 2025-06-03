@@ -1,4 +1,5 @@
-import pkg_resources
+import importlib
+
 from AnyQt.QtCore import QCoreApplication, QPoint, Qt, QRect
 from AnyQt.QtGui import QPixmap, QFont, QFontMetrics, QPainter, QColor
 
@@ -7,8 +8,7 @@ def splash_screen():
     """
     """
     pm = QPixmap(
-        pkg_resources.resource_filename(
-            __name__, "icons/splash.png")
+        str(importlib.resources.files("quasar").joinpath("launcher/icons/splash.png"))
     )
 
     version = QCoreApplication.applicationVersion()
