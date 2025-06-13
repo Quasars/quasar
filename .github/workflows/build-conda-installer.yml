@@ -96,6 +96,7 @@ jobs:
                          pyqtwebengine=5.15.* \
                          Orange3=$VERSION \
                          openTSNE=1.0.1 \
+                         catboost \
                          blas=*=openblas \
                          mamba \
                          quasar=$QUASAR_VERSION \
