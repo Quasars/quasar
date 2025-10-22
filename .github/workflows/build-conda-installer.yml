@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on:  windows-2019
+    runs-on:  windows-2022
     timeout-minutes: 60
     env:
       REPO: https://github.com/biolab/orange3.git
@@ -139,7 +139,7 @@ jobs:
   test:
     name: Test
     needs: build
-    runs-on: windows-2019
+    runs-on: windows-2022
     env:
       INSTALL_PATH: "D:\\install path"
     steps:
