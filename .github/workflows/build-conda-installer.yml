@@ -174,10 +174,10 @@ jobs:
           "$PYTHON" -m unittest -v Orange.tests Orange.widgets.tests
 
           # Quasar specific tests
-          $PYTHON -m unittest -v orangecontrib.spectroscopy.tests
-          $PYTHON -m unittest -v orangecontrib.snom.tests orangecontrib.snom.widgets.tests
-          $PYTHON -m quasar --help
-          $PYTHON -c "import opusFC"
+          "$PYTHON" -m unittest -v orangecontrib.spectroscopy.tests
+          "$PYTHON" -m unittest -v orangecontrib.snom.tests orangecontrib.snom.widgets.tests
+          "$PYTHON" -m quasar --help
+          "$PYTHON" -c "import opusFC"
 
       - name: Test conda
         shell: cmd
