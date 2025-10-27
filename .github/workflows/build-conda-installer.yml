@@ -176,6 +176,7 @@ jobs:
 
           # Quasar specific tests
           "$PYTHON" -m unittest -v orangecontrib.spectroscopy.tests
+          "$PYTHON" -m pip install pytest
           "$PYTHON" -m pytest -v --pyargs orangecontrib.snom
           "$PYTHON" -m quasar --help
           "$PYTHON" -c "import opusFC"
