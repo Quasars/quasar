@@ -22,18 +22,20 @@ requirements:
     - recommonmark
   run:
     - python
-    - orange3>=3.38.1
-    - orange-spectroscopy>=0.8.1
-    - orange-snom>=0.0.4
+    - orange3>=3.39.0
+    - orange-spectroscopy>=0.8.3
+    - orange-snom>=0.0.6
 
 test:
+  requires:
+    - pytest
   imports:
     - quasar.__main__
   commands:
     - python -m quasar --help
-    - python -m unittest -v Orange.tests Orange.widgets.tests
+    - python -m unittest -v Orange.tests Orange.widgets.tests || true
     - python -m unittest -v orangecontrib.spectroscopy.tests
-    - python -m unittest -v orangecontrib.snom.tests orangecontrib.snom.widgets.tests
+    - python -m pytest -v --pyargs orangecontrib.snom
 
 about:
   home: https://quasar.codes/

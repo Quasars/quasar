@@ -16,7 +16,7 @@ jobs:
     env:
       REPO: https://github.com/biolab/orange3.git
       BUILD_BRANCH: master
-      BUILD_COMMIT: "3.38.1"
+      BUILD_COMMIT: "3.39.0"
       BUILD_LOCAL: ""
 
       PYTHONFAULTHANDLER: 1
@@ -27,9 +27,9 @@ jobs:
       # CONDA_SPEC_FILE: ..\specs\win\conda-spec.txt
 
       # Quasar
-      QUASAR_VERSION: "1.11.1"
-      SPECTROSCOPY_VERSION: "0.8.1"
-      SNOM_VERSION: "0.0.4"
+      QUASAR_VERSION: "1.12.0"
+      SPECTROSCOPY_VERSION: "0.8.3"
+      SNOM_VERSION: "0.0.6"
 
     strategy:
       fail-fast: False
@@ -175,7 +175,7 @@ jobs:
 
           # Quasar specific tests
           "$PYTHON" -m unittest -v orangecontrib.spectroscopy.tests
-          "$PYTHON" -m unittest -v orangecontrib.snom.tests orangecontrib.snom.widgets.tests
+          "$PYTHON" -m pytest -v --pyargs orangecontrib.snom
           "$PYTHON" -m quasar --help
           "$PYTHON" -c "import opusFC"
 
