@@ -1,9 +1,6 @@
-# Fixed requirements file for creating a python environment for
-# macOS Orange.app.
+# List packages that are/would be required for installation
 
-# Prebuild dependencies that themself do not publish wheels (e.g. bottleneck)
 --find-links=https://orange.biolab.si/download/files/wheelhouse
-
 --extra-index-url=https://pypi.anaconda.org/ales-erjavec/simple
 
 --only-binary numpy,scipy,scikit-learn,PyQt5,opentsne
