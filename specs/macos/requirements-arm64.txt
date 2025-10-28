@@ -15,10 +15,10 @@ keyring~=23.0
 keyrings.alt~=4.0
 AnyQt~=0.2.0
 
-PyQt6~=6.6.1
-PyQt6-Qt6~=6.6.3
-PyQt6-WebEngine~=6.6.0
-PyQt6-WebEngine-Qt6~=6.6.3
+PyQt6~=6.8.1
+PyQt6-Qt6~=6.8.1
+PyQt6-WebEngine~=6.8.0
+PyQt6-WebEngine-Qt6~=6.8.1
 
 docutils~=0.18.0
 pip~=23.3.1
