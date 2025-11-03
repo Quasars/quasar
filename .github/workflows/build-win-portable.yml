@@ -75,7 +75,7 @@ jobs:
           export PATH="$(cygpath -u C:\\msys64\\usr\\bin):$PATH"
           echo PATH=$PATH
           mkdir dist
-          
+          pacman -S --noconfirm zip
           ./scripts/windows/build-win-portable.sh  --no-index --find-links=./wheels  --python-version $PYTHON_VERSION --pip-arg=--pre --pip-arg=-r --pip-arg=$ENVSPEC --pip-arg=Orange3
 
           INSTALLER=( dist/Orange*.zip )
