@@ -33,7 +33,7 @@ jobs:
       fail-fast: False
       matrix:
         include:
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
             python-version: "3.10.11"
             req: ../specs/macos/requirements.txt
@@ -162,7 +162,7 @@ jobs:
       matrix:
         # Repeat of above build step runner definitions
         include:
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
           - os: macos-14
             arch: arm64
