@@ -35,12 +35,12 @@ jobs:
         include:
           - os: macos-15-intel
             arch: x86_64
-            python-version: "3.11.8"
+            python-version: "3.12.10"
             req: ../specs/macos/requirements.txt
             app: "/Applications/Quasar.app"
           - os: macos-14
             arch: arm64
-            python-version: "3.11.8"
+            python-version: "3.12.10"
             req: ../specs/macos/requirements-arm64.txt
             app: "/Applications/Quasar-M.app"
 
@@ -50,7 +50,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: Checkout orange3
         shell: bash

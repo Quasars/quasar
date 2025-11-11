@@ -35,7 +35,7 @@ jobs:
       fail-fast: False
       matrix:
         include:
-          - python-version: "3.11"
+          - python-version: "3.12"
             micromamba-version: "2.1.0-0"
 
     defaults:
@@ -48,7 +48,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - uses: mamba-org/setup-micromamba@v1
         with:
