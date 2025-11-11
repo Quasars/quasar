@@ -36,7 +36,7 @@ jobs:
       matrix:
         include:
           - python-version: "3.12"
-            micromamba-version: "2.1.0-0"
+            micromamba-version: "2.3.3-0"
 
     defaults:
       run:
