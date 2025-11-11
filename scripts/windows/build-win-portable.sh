@@ -90,7 +90,7 @@ mv "${BUILDBASE}/tmp/tools" "${BUILDDIR}"
 PYTHON="${BUILDDIR}/python.exe"
 
 "${PYTHON}" -m ensurepip
-"${PYTHON}" -m pip install "pip==23.3.*" wheel
+"${PYTHON}" -m pip install "pip~=25.3.*" wheel
 "${PYTHON}" -m pip install "${PIP_INDEX_ARGS[@]}" "${PIP_ARGS[@]}"
 
 mkdir -p "${BUILDDIR}/etc"
