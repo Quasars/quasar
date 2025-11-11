@@ -162,7 +162,7 @@ jobs:
       matrix:
         # Repeat of above build step runner definitions
         include:
-          - os: macos-14
+          - os: macos-15-intel
             arch: x86_64
           - os: macos-14
             arch: arm64
