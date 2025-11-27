@@ -532,7 +532,8 @@ Section "Install required pacakges" InstallPackages
     ${ExecToLog} '\
         "$PythonExecPrefix\python" -m pip install --upgrade \
              --isolated --no-cache-dir --no-index \
-             --find-links "${TEMPDIR}\wheelhouse" \
+             --no-warn-script-location \
+             --find-links "${TEMPDIR}\wheels" \
              pip>=9 \
             '
     Pop $0
@@ -544,7 +545,8 @@ Section "Install required pacakges" InstallPackages
     ${ExecToLog} '\
         "$PythonExecPrefix\python" -m pip install \
              --isolated --no-cache-dir --no-index \
-             --find-links "${TEMPDIR}\wheelhouse" \
+             --no-warn-script-location \
+             --find-links "${TEMPDIR}\wheels" \
              -r "${TEMPDIR}\requirements.txt" \
         '
     Pop $0
