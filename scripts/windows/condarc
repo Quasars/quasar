@@ -1,0 +1,3 @@
+channels:
+  - https://quasar.codes/conda/
+  - conda-forge

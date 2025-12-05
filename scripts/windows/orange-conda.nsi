@@ -18,7 +18,9 @@
 
 # ${BASEDIR}/
 #   conda-pkgs/
-#   install.bat
+#   .condarc
+#   conda.bat
+#   sitecustomize.py
 #   conda-spec.txt
 
 Unicode True
@@ -266,6 +268,7 @@ Var SilentInstallDir
 Var PythonPrefix
 Var PythonExecPrefix
 Var PythonScriptsPrefix
+Var Micromamba
 
 Var LogFile
 !macro __LOG_INIT
@@ -427,8 +430,6 @@ Section "Install required packages" InstallPackages
         ${ExtractTemp} "${BASEDIR}\conda-spec.txt" "${TEMPDIR}"
 !else
         ${ExtractTemp} "${BASEDIR}\conda-spec.txt" "${TEMPDIR}"
-        ${ExtractTemp} "${BASEDIR}\install.bat" "${TEMPDIR}"
-        ${ExtractTemp} "${BASEDIR}\sitecustomize.py" "${TEMPDIR}"
         ${ExtractTempRec} "${BASEDIR}\conda-pkgs\*.*" "$InstDir\pkgs"
 !endif  # ONLINE
 
@@ -459,9 +460,35 @@ Section "Install required packages" InstallPackages
             --prefix "$PythonPrefix" \
         '
 !else
-    # Run the install via from a helper script (informative output).
+    StrCpy $Micromamba "$InstDir\micromamba.exe"
+    DetailPrint "Creating an conda env"
+    # Just make sure that conda-meta dir is present, this is the minimum
+    # required to work. micromamba create refuses to create an env that is the
+    # same as the --root-prefix env.
+    CreateDirectory "$InstDir\conda-meta"
+    # Install packages
     DetailPrint "Installing packages (this might take a while)"
-    ${ExecToLog} 'cmd.exe /c install.bat "$PythonPrefix" "$InstDir\micromamba.exe"'
+    ${ExecToLog} '\
+            "$Micromamba" --root-prefix "$InstDir" \
+                install --safety-checks disabled \
+                --yes --prefix "$InstDir" \
+                --file "${TEMPDIR}\conda-spec.txt" \
+            '
+    Pop $0
+    ${If} $0 != 0
+        Abort '"micromamba install" exited with $0. Cannot continue.'
+    ${EndIf}
+    # Install activate hook
+    DetailPrint "Installing activate hook"
+    ${ExecToLog} '\
+            "$Micromamba" --root-prefix "$InstDir" \
+                shell hook -s cmd.exe \
+            '
+
+    DetailPrint "Customizing installation"
+    ${ExtractTemp} "${BASEDIR}\.condarc" "$InstDir"
+    ${ExtractTemp} "${BASEDIR}\sitecustomize.py" "$InstDir\Lib"
+    ${ExtractTemp} "${BASEDIR}\conda.bat" "$InstDir\Scripts"
 !endif # ONLINE
     Pop $0
     SetDetailsPrint none

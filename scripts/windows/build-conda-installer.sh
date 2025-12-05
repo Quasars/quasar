@@ -302,8 +302,6 @@ make-installer() {
     local extransisparams=()
     if [[ "${ONLINE}" == yes ]]; then
         extransisparams+=( -DONLINE )
-    else
-        cp "${scriptdir}/micromambainstall.bat" "${BASEDIR:?}"/install.bat
     fi
     local basedir=$(win-path "${BASEDIR:?}")
     local versionstr=${VERSION:?}
@@ -381,5 +379,6 @@ cp "${CACHEDIR:?}/micromamba/micromamba-${MICROMAMBA_VERSION}-win-64" \
 
 mkdir -p "${BASEDIR:?}/icons"
 cp "$(dirname "$0")"/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
-cp "$(dirname "$0")"/sitecustomize.py "${BASEDIR:?}"/
+cp "$(dirname "$0")"/{sitecustomize.py,conda.bat} "${BASEDIR:?}"/
+cp "$(dirname "$0")"/condarc "${BASEDIR:?}"/.condarc
 make-installer
