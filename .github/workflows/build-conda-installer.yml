@@ -157,6 +157,18 @@ jobs:
           for %%s in ( Quasar-*.exe ) do ( set "INSTALLER=%%s" )
           echo INSTALLER = %INSTALLER%
           %INSTALLER% /S /D=%INSTALL_PATH% > nul
+          echo ERRORLEVEL = %ERRORLEVEL%
+          type "%TEMP%\%INSTALLER%-install-log.txt"
+
+      - name: Test conda
+        shell: cmd
+        run: |
+          dir "%INSTALL_PATH%"\Scripts
+          "%INSTALL_PATH%"\Scripts\conda.bat info
+          "%INSTALL_PATH%"\Scripts\conda.bat --help
+          "%INSTALL_PATH%"\Scripts\activate.bat
+          echo CONDA_PREFIX = %CONDA_PREFIX%
+
       - name: Run tests
         shell: bash
         run: |
@@ -172,8 +184,7 @@ jobs:
           export ORANGE_DEPRECATIONS_ERROR=1
           export PYTHONWARNINGS=module
 
-          # ignored for 1.12.0 because some deprectations faild
-          # "$PYTHON" -m unittest -v Orange.tests Orange.widgets.tests
+          "$PYTHON" -m unittest -v Orange.tests Orange.widgets.tests
 
           # Quasar specific tests
           "$PYTHON" -m unittest -v orangecontrib.spectroscopy.tests
@@ -181,11 +192,3 @@ jobs:
           "$PYTHON" -m pytest -v --pyargs orangecontrib.snom
           "$PYTHON" -m quasar --help
           "$PYTHON" -c "import opusFC"
-
-      - name: Test conda
-        shell: cmd
-        run: |
-          "%INSTALL_PATH%"\Scripts\conda.bat --help
-          "%INSTALL_PATH%"\Scripts\conda.bat info
-          "%INSTALL_PATH%"\Scripts\activate.bat
-          echo %CONDA_PREFIX%
