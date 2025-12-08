@@ -27,8 +27,7 @@ Options:
     --online (yes|no)       Build an \"online\" or \"offline\" installer.
                             In an online installer only the micromamba binary
                             is included. All other packages are otherwise
-                            fetched at installation time
-                            (offline is currently not recommended).
+                            fetched at installation time (default no).
     -h --help               Print this help
 
 
@@ -53,7 +52,7 @@ MICROMAMBA_VERSION=${MICROMAMBA_VERSION_DEFAULT}
 PLATTAG=win_amd64
 
 # online or offline installer.
-ONLINE=
+ONLINE=no
 
 # The default conda explicit env spec
 ENV_SPEC_FILE="$(dirname "$0")"/specs/conda-spec.txt

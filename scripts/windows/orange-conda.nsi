@@ -426,10 +426,8 @@ Section "Install required packages" InstallPackages
         StrCpy $0 "create"
     ${EndIf}
 
-!ifdef ONLINE
-        ${ExtractTemp} "${BASEDIR}\conda-spec.txt" "${TEMPDIR}"
-!else
-        ${ExtractTemp} "${BASEDIR}\conda-spec.txt" "${TEMPDIR}"
+    ${ExtractTemp} "${BASEDIR}\conda-spec.txt" "${TEMPDIR}"
+!ifndef ONLINE
         ${ExtractTempRec} "${BASEDIR}\conda-pkgs\*.*" "$InstDir\pkgs"
 !endif  # ONLINE
 
@@ -437,29 +435,6 @@ Section "Install required packages" InstallPackages
     SetDetailsPrint none
     SetOutPath "${TEMPDIR}"
     SetDetailsPrint both
- !ifdef ONLINE
-    # Create an empty env first
-    ${If} $0 == "create"
-        # Create an empty initial skeleton to layout the conda, activate.bat
-        # and other things needed to manage the environment. Installing from
-        # an explicit package specification file does not do that.
-        ${ExecToLog} '\
-            "$InstDir\micromamba.exe" create \
-                --yes --quiet --prefix "$PythonPrefix" \
-            '
-        Pop $0
-        ${If} $0 != 0
-            Abort '"micromamba create" exited with $0. Cannot continue.'
-        ${EndIf}
-    ${EndIf}
-    DetailPrint "Fetching and installing packages (this might take a while)"
-    ${ExecToLog} '\
-        "$InstDir\micromamba.exe" install \
-            --yes --quiet \
-            --file "${TEMPDIR}\conda-spec.txt" \
-            --prefix "$PythonPrefix" \
-        '
-!else
     StrCpy $Micromamba "$InstDir\micromamba.exe"
     DetailPrint "Creating an conda env"
     # Just make sure that conda-meta dir is present, this is the minimum
@@ -484,19 +459,17 @@ Section "Install required packages" InstallPackages
             "$Micromamba" --root-prefix "$InstDir" \
                 shell hook -s cmd.exe \
             '
-
+    Pop $0
+    ${If} $0 != 0
+        Abort '"micromamba install" exited with $0. Cannot continue.'
+    ${EndIf}
     DetailPrint "Customizing installation"
     ${ExtractTemp} "${BASEDIR}\.condarc" "$InstDir"
     ${ExtractTemp} "${BASEDIR}\sitecustomize.py" "$InstDir\Lib"
     ${ExtractTemp} "${BASEDIR}\conda.bat" "$InstDir\Scripts"
-!endif # ONLINE
-    Pop $0
     SetDetailsPrint none
     Pop $OUTDIR
     SetDetailsPrint both
-    ${If} $0 != 0
-        Abort '"conda" command exited with $0. Cannot continue.'
-    ${EndIf}
 SectionEnd
 
 
