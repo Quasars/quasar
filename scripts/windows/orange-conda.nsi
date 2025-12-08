@@ -451,6 +451,7 @@ Section "Install required packages" InstallPackages
             '
     Pop $0
     ${If} $0 != 0
+        ${LogWrite} '"micromamba install" exited with $0. Cannot continue.'
         Abort '"micromamba install" exited with $0. Cannot continue.'
     ${EndIf}
     # Install activate hook
@@ -461,7 +462,8 @@ Section "Install required packages" InstallPackages
             '
     Pop $0
     ${If} $0 != 0
-        Abort '"micromamba install" exited with $0. Cannot continue.'
+        ${LogWrite} '"micromamba shell hook" exited with $0. Cannot continue.'
+        Abort '"micromamba shell hook" exited with $0. Cannot continue.'
     ${EndIf}
     DetailPrint "Customizing installation"
     ${ExtractTemp} "${BASEDIR}\.condarc" "$InstDir"
