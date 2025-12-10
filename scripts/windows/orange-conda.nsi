@@ -385,6 +385,18 @@ FunctionEnd
 Section "-Micromamba" SectionMicromamba
     DetailPrint "Installing micromamba.exe"
     ${ExtractTemp} "${BASEDIR}\micromamba.exe" "$InstDir"
+    ${ExecToLog} '"$InstDir\micromamba.exe" --help'
+    Pop $0
+    ${If} $0 != 0
+        Delete $InstDir\micromamba.exe
+        MessageBox MB_OK '\
+            "micromamba" command exited with an error code $0.$\r$\n\
+            Most likely reason for this is a missing or obsolete \
+            "Microsoft Visual C++ Redistributable" package.$\r$\n\
+            Please install the latest from https://aka.ms/vc14/vc_redist.x86.exe\
+        '
+        Abort "micromamba.exe exited with $0. Cannot continue"
+    ${EndIf}
 SectionEnd
 
 Function un.Micromamba
