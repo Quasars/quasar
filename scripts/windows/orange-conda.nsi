@@ -384,11 +384,12 @@ FunctionEnd
 # A Micromamba executable
 Section "-Micromamba" SectionMicromamba
     DetailPrint "Installing micromamba.exe"
-    ${ExtractTemp} "${BASEDIR}\micromamba.exe" "$InstDir"
-    ${ExecToLog} '"$InstDir\micromamba.exe" --help'
+    ${ExtractTempRec} "${BASEDIR}\micromamba\*.*" "$InstDir\.micromamba"
+    StrCpy $Micromamba "$InstDir\.micromamba\micromamba.exe"
+    ${ExecToLog} '"$Micromamba" --help'
     Pop $0
     ${If} $0 != 0
-        Delete $InstDir\micromamba.exe
+        RMDir /r $InstDir\.micromamba
         MessageBox MB_OK '\
             "micromamba" command exited with an error code $0.$\r$\n\
             Most likely reason for this is a missing or obsolete \
@@ -400,7 +401,7 @@ Section "-Micromamba" SectionMicromamba
 SectionEnd
 
 Function un.Micromamba
-    Delete "$InstDir\micromamba.exe"
+    RMDir /r "$InstDir\.micromamba"
 FunctionEnd
 
 
@@ -447,7 +448,7 @@ Section "Install required packages" InstallPackages
     SetDetailsPrint none
     SetOutPath "${TEMPDIR}"
     SetDetailsPrint both
-    StrCpy $Micromamba "$InstDir\micromamba.exe"
+
     DetailPrint "Creating an conda env"
     # Just make sure that conda-meta dir is present, this is the minimum
     # required to work. micromamba create refuses to create an env that is the
@@ -496,7 +497,7 @@ Function un.InstallPackages
     ${AndIf} ${FileExists} "$InstDir\${UNINSTALL_EXEFILE}"
         DetailPrint "Removing all packages"
         ${ExecToLog} '\
-            "$InstDir\micromamba.exe" remove \
+            "$InstDir\.micromamba\micromamba.exe" remove \
                 --root-prefix "$InstDir" \
                 --all --yes --prefix "$InstDir" \
             '

@@ -49,6 +49,8 @@ CACHEDIR=
 MICROMAMBA_VERSION_DEFAULT=1.5.1-0
 MICROMAMBA_VERSION=${MICROMAMBA_VERSION_DEFAULT}
 
+MSVC_REDIST_VERSION=${MSVC_REDIST_VERSION:-14.44.35112}
+
 PLATTAG=win_amd64
 
 # online or offline installer.
@@ -373,8 +375,15 @@ if [[ ! "${PYTHON_VERSION}" ]]; then
     exit 1;
 fi
 
+mkdir "${BASEDIR:?}/micromamba"
 cp "${CACHEDIR:?}/micromamba/micromamba-${MICROMAMBA_VERSION}-win-64" \
-   "${BASEDIR:?}/micromamba.exe"
+   "${BASEDIR:?}/micromamba/micromamba.exe"
+
+pip download --dest="${CACHEDIR:?}/msvc_runtime" --platform=win_amd64 --no-deps msvc-runtime==${MSVC_REDIST_VERSION:?}
+7z e -o"${BASEDIR:?}/micromamba" "${CACHEDIR:?}/msvc_runtime/msvc_runtime-${MSVC_REDIST_VERSION:?}-*.whl" \
+    "*/data/msvcp140.dll" \
+    "*/data/Scripts/vcruntime140.dll" \
+    "*/data/Scripts/vcruntime140_1.dll"
 
 mkdir -p "${BASEDIR:?}/icons"
 cp "$(dirname "$0")"/{quasar.ico,OrangeOWS.ico} "${BASEDIR:?}/icons"
