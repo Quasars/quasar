@@ -1,5 +1,5 @@
 import importlib
-import importlib_metadata
+from importlib.metadata import distribution
 
 from AnyQt.QtCore import Qt
 from AnyQt.QtGui import QColor, QIcon
@@ -12,7 +12,7 @@ from quasar.launcher.update_check import check_for_updates
 
 
 def version():
-    return importlib_metadata.distribution("quasar").version
+    return distribution("quasar").version
 
 
 class QuasarConfig(config.Config):
