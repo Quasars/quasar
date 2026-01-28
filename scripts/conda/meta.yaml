@@ -23,7 +23,7 @@ requirements:
   run:
     - python
     - orange3>=3.40.0
-    - orange-spectroscopy>=0.9.0
+    - orange-spectroscopy>=0.9.1
     - orange-snom>=0.1.0
 
 test:
