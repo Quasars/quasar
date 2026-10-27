@@ -6,8 +6,8 @@
 --only-binary numpy,scipy,scikit-learn,PyQt5,opentsne
 
 numpy~=2.1.0
-scipy~=1.13.0
-scikit-learn~=1.5.1
+scipy~=1.16.0
+scikit-learn~=1.6.1
 bottleneck~=1.4.0
 chardet~=5.0
 keyring~=23.0
