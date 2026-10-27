@@ -21,7 +21,6 @@ jobs:
 
       PYTHONFAULTHANDLER: 1
       PIP_DISABLE_PIP_VERSION_CHECK: 1
-      PIP_CACHE_DIR: .pip-cache
       PIP_PREFER_BINARY: 1
       CONDA_BUILD_VERSION: "3.26.*"
       # CONDA_SPEC_FILE: ..\specs\win\conda-spec.txt
@@ -35,7 +34,7 @@ jobs:
       fail-fast: False
       matrix:
         include:
-          - python-version: "3.12"
+          - python-version: "3.13"
             micromamba-version: "2.3.3-0"
 
     defaults:
@@ -48,7 +47,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - uses: mamba-org/setup-micromamba@v1
         with:
@@ -57,7 +56,7 @@ jobs:
               - https://quasar.codes/conda/
               - conda-forge
           environment-name: build
-          create-args: conda conda-build boa python=3.11
+          create-args: conda conda-build boa python=${{ matrix.python-version }}
           init-shell: bash cmd.exe
           generate-run-shell: true
 

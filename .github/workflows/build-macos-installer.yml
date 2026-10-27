@@ -20,7 +20,6 @@ jobs:
       BUILD_LOCAL: ""
       PYTHONFAULTHANDLER: 1
       PIP_DISABLE_PIP_VERSION_CHECK: 1
-      PIP_CACHE_DIR: .pip-cache
       PIP_PREFER_BINARY: 1
       PIP_NO_WARN_SCRIPT_LOCATION: 1
 
@@ -35,12 +34,12 @@ jobs:
         include:
           - os: macos-15-intel
             arch: x86_64
-            python-version: "3.12.10"
+            python-version: "3.13.17"
             req: ../specs/macos/requirements.txt
             app: "/Applications/Quasar.app"
           - os: macos-14
             arch: arm64
-            python-version: "3.12.10"
+            python-version: "3.13.17"
             req: ../specs/macos/requirements-arm64.txt
             app: "/Applications/Quasar-M.app"
 
@@ -48,9 +47,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            specs/macos/*.txt
+            .github/workflows/build-macos-installer.yml
 
       - name: Checkout orange3
         shell: bash
@@ -60,14 +63,6 @@ jobs:
           cd orange3
           git fetch origin $BUILD_BRANCH
           git checkout $BUILD_COMMIT
-
-      - name: Setup Pip Cache
-        uses: actions/cache@v4
-        with:
-          path: .pip-cache
-          key: ${{ runner.os }}-py-${{ matrix.python-version }}-pip-${{ hashFiles('.github/workflows/build-macos-installer.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-${{ matrix.python-version }}-pip
 
       - name: 'Install modified create-dmg (modified to allow longer detach timeouts)'
         shell: bash

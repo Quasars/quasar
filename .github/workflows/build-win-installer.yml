@@ -15,7 +15,6 @@ jobs:
 
       PYTHONFAULTHANDLER: 1
       PIP_DISABLE_PIP_VERSION_CHECK: 1
-      PIP_CACHE_DIR: .pip-cache
       PIP_PREFER_BINARY: 1
 
       BUILD_DEPS: "wheel~=0.37.0 pip~=26.2.2"
@@ -25,15 +24,19 @@ jobs:
       fail-fast: False
       matrix:
         include:
-          - python-version: "3.12.10"
+          - python-version: "3.13.17"
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            specs/win/*.txt
+            .github/workflows/build-win-installer.yml
 
       - name: Checkout orange3
         shell: bash
@@ -43,14 +46,6 @@ jobs:
           cd orange3
           git fetch origin $BUILD_BRANCH
           git checkout $BUILD_COMMIT
-
-      - name: Setup Pip Cache
-        uses: actions/cache@v4
-        with:
-          path: .pip-cache
-          key: ${{ runner.os }}-py-${{ matrix.python-version }}-pip-${{ hashFiles('.github/workflows/build-win-installer.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-${{ matrix.python-version }}-pip
 
       - name: Prepare wheels
         shell: bash
