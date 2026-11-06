@@ -37,7 +37,7 @@ jobs:
             python-version: "3.13.17"
             req: ../specs/macos/requirements.txt
             app: "/Applications/Quasar.app"
-          - os: macos-14
+          - os: macos-15
             arch: arm64
             python-version: "3.13.17"
             req: ../specs/macos/requirements-arm64.txt
@@ -159,7 +159,7 @@ jobs:
         include:
           - os: macos-15-intel
             arch: x86_64
-          - os: macos-14
+          - os: macos-15
             arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
