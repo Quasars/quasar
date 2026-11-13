@@ -5,10 +5,10 @@
 --prefer-binary
 --only-binary numpy,scipy,scikit-learn,bottleneck,PyQt6,PyQt6-webengine,PyQt6-Qt6
 
-numpy~=2.1.0
+numpy~=2.3.0
 scipy~=1.16.0
 scikit-learn~=1.7.2
-bottleneck~=1.4.0
+bottleneck~=1.6.0
 chardet~=5.0
 keyring~=23.0
 keyrings.alt~=4.0
@@ -21,13 +21,13 @@ PyQt6-WebEngine-Qt6~=6.8.1
 
 docutils~=0.18.0
 pip~=26.2.2
-pyqtgraph~=0.13.1
+pyqtgraph~=0.14.0
 xlrd~=2.0
 xlsxwriter
 serverfiles
 opentsne~=1.0.0
 python-louvain>=0.13
-pandas~=2.2.0
+pandas~=2.3.0
 xgboost
 catboost
 

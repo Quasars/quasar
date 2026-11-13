@@ -85,12 +85,12 @@ jobs:
             micromamba create -p ./env --yes \
                          ${EXTRA_ARGS[*]} \
                          python=$PYTHON_VERSION \
-                         numpy=2.1.* \
+                         numpy=2.3.* \
                          scipy=1.16.* \
                          scikit-learn=1.7.* \
-                         pandas=2.2.* \
-                         pyqtgraph=0.13.* \
-                         bottleneck=1.4.* \
+                         pandas=2.3.* \
+                         pyqtgraph=0.14.* \
+                         bottleneck=1.6.* \
                          pyqt=5.15.* \
                          pyqtwebengine=5.15.* \
                          Orange3=$VERSION \
