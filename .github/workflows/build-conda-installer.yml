@@ -87,7 +87,7 @@ jobs:
                          python=$PYTHON_VERSION \
                          numpy=2.1.* \
                          scipy=1.16.* \
-                         scikit-learn=1.6.* \
+                         scikit-learn=1.7.* \
                          pandas=2.2.* \
                          pyqtgraph=0.13.* \
                          bottleneck=1.4.* \
