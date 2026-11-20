@@ -27,7 +27,7 @@ jobs:
 
       # Quasar
       QUASAR_VERSION: "1.13.1"
-      SPECTROSCOPY_VERSION: "0.9.1"
+      SPECTROSCOPY_VERSION: "0.9.3"
       SNOM_VERSION: "0.1.0"
 
     strategy:
