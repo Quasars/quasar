@@ -26,8 +26,8 @@ jobs:
       # CONDA_SPEC_FILE: ..\specs\win\conda-spec.txt
 
       # Quasar
-      QUASAR_VERSION: "1.13.1"
-      SPECTROSCOPY_VERSION: "0.9.3"
+      QUASAR_VERSION: "1.14.0"
+      SPECTROSCOPY_VERSION: "0.9.4"
       SNOM_VERSION: "0.1.0"
 
     strategy:
